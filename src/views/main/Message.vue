@@ -12,37 +12,33 @@
         </div>
 
         <div class="message-content">
-            <div class="message">
-                <!-- <div class="receiver">
+            <div class="message" v-for="msg in messages" :key="msg.id">
+                <div class="receiver" v-if="msg.senderId === msg.cekReceiver && msg.receiverId === msg.cekSender">
                     <img :src="getUser.photoProfile" alt="receiver profile">
-                    <div class="the-message" v-for="receiverMessage in getMessageReceiver" :key="receiverMessage.id">
-                        <h6>{{receiverMessage.message}}</h6>
+                    <div class="the-message">
+                        <h6>{{msg.message}}</h6>
                     </div>
-                    <h6>{{receiverMessage.time}}</h6>
+                    <!-- <h6>{{receiverMessage.time}}</h6> -->
                 </div>
 
-                <div class="sender">
-                    <div class="the-message" v-for="senderMessage in getMessageSender" :key="senderMessage.id">
-                        <h6>{{senderMessage.message}}</h6>
-                    </div>
-                    <div class="img-profile">
-                        <img @click.prevent="clickProfile" :src="userLogin.photoProfile" alt="sender profile">
-                    </div>
-                </div> -->
-
-                <div class="sender">
-                    <div class="the-message" v-for="(message, index) in messages" :key="index">
-                        <h6>{{message.message}}</h6>
+                <div class="sender" v-else-if="msg.senderId === msg.cekSender && msg.receiverId === msg.cekReceiver">
+                    <div class="the-message">
+                        <h6>{{msg.message}}</h6>
                     </div>
                     <div class="img-profile">
                         <img @click.prevent="clickProfile" :src="userLogin.photoProfile" alt="sender profile">
                     </div>
                 </div>
+
+                <!-- <ul class="list-group">
+                    <li class="list-group-item active">Name room: {{userLogin.name}}</li>
+                    <li class="list-group-item" v-for="(msg, index) in messages" :key="index">{{msg.senderId}}=>{{msg.message}}</li>
+                </ul> -->
             </div>
         </div>
 
         <div class="footer-message">
-            <input type="text" v-model="inputMessage" placeholder="Type your message..." class="form-control icon-send" @keypress.enter="handleClick">
+            <input type="text" v-model="inputMessage" placeholder="Type your message..." class="form-control icon-send" @keyup.enter="handleClick">
         </div>
     </div>
 </template>
@@ -55,8 +51,12 @@ export default {
   data () {
     return {
       name: '',
+      senderId: '',
+      receiverId: '',
       messages: [],
-      inputMessage: ''
+      inputMessage: '',
+      cekReceiver: '',
+      cekSender: ''
     }
   },
   props: ['socket'],
@@ -64,33 +64,48 @@ export default {
     SideProfile
   },
   methods: {
-    ...mapActions(['getUserById', 'getAll', 'senderMessage', 'receiverMessage']),
+    ...mapActions(['getUserById', 'getAll', 'senderMessage', 'receiverMessage', 'getAllMessage']),
     clickProfile () {
       this.$router.push('/profile')
     },
     handleClick () {
-      this.socket.emit('receiverMessage', { message: this.inputMessage, senderId: this.userLogin.id, receiverId: this.getUser.id }, (message) => {
-        this.messages.push(message)
-      })
+      this.socket.emit('receiverMessage', { message: this.inputMessage, senderId: this.senderId, receiverId: this.getUser.id, name: this.userLogin.name })
       this.inputMessage = ''
     }
   },
   mounted () {
     this.getUserById()
     this.getAll()
-    this.senderMessage()
-    this.receiverMessage()
-    // this.name = this.userLogin.name
-    this.socket.emit('initialUser', { senderId: this.userLogin.id })
-    // this.io.on('initialUser', (name) => {
-    //   console.log(name.name)
+    this.getAllMessage()
+      .then(res => {
+        this.socket.on('kirimkembali', (data) => {
+          console.log('kirim kembali', data)
+          const dataMessage = res.data.result
+          const cekReceiver = this.getUser.id
+          const cekSender = sessionStorage.getItem('id')
+          this.cekReceiver = cekReceiver
+          this.cekSender = cekSender
+          console.log('data message', res.data.result)
+          for (const all of dataMessage) {
+            all.cekSender = cekSender
+            all.cekReceiver = cekReceiver
+          }
+
+          data.cekSender = cekSender
+          data.cekReceiver = cekReceiver
+          this.messages.push(data)
+        })
+      })
+    const senderId = sessionStorage.getItem('id')
+    this.senderId = senderId
+    this.socket.emit('initialUser', { senderId })
+    // this.socket.on('kirimkembali', (data) => {
+    //   console.log(data)
+    //   this.messages.push(data)
     // })
-    this.socket.on('kirimKembali', (data) => {
-      this.messages.push(data)
-    })
   },
   computed: {
-    ...mapGetters(['userLogin', 'getUser', 'getMessageSender', 'getMessageReceiver'])
+    ...mapGetters(['userLogin', 'getUser'])
   }
 }
 </script>
@@ -107,6 +122,9 @@ export default {
     width: 100%;
     height: 120px;
     position: relative;
+    /* border-bottom-right-radius: 50px; */
+    border-bottom: 10px solid #7E98DF;
+    border-radius: 50px;
 }
 
 .nav-profile .icon-profile {
@@ -210,8 +228,10 @@ export default {
     width: 100%;
     height: 120px;
     background: #FFFFFF;
-    position: fixed;
+    position: absolute;
     bottom: 0;
+    border-top: 10px solid #7E98DF;
+    border-radius: 50px;
 }
 
 .footer-message input {

@@ -16,7 +16,7 @@
             </div>
             <div class="name-message">
                 <h6 class="username">{{friend.name}}</h6>
-                <p class="message">ho, bro! Come to my house!</p>
+                <p class="message">{{friend.email}}</p>
             </div>
             <p class="time">15.12</p>
         </div>
@@ -32,10 +32,11 @@ export default {
   components: {
     Menu
   },
+  props: ['socket'],
   methods: {
     ...mapActions(['getFriends']),
     goMessage (id) {
-      this.$router.push({ path: '/main/message', query: { id: id } })
+      this.$router.push({ name: 'Message', query: { id: id } })
     }
   },
   mounted () {
@@ -92,8 +93,6 @@ export default {
     flex-direction: column;
     margin-top: 40px;
     justify-content: center;
-    align-items: center;
-    align-content: center;
 }
 
 .menu-chat-list h1 {
@@ -108,12 +107,14 @@ export default {
     width: 133px;
     height: 50px;
     padding-top: 13px;
+    align-self: center;
 }
 
 .menu-chat-list .form-chat {
     display: flex;
     margin-top: 30px;
     cursor: pointer;
+    padding-left: 30px;
 }
 
 .menu-chat-list .form-chat .img-profile img{

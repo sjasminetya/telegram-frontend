@@ -6,7 +6,14 @@
     </div>
     <div class="profile">
         <div class="img-profile">
-            <img :src="userLogin.photoProfile" alt="user photo">
+            <img id="update-photo" :src="userLogin.photoProfile" alt="user photo">
+            <div class="edit-image">
+                <!-- <input id="input-upload-image" type="file" accept="image/x-png/,image/gif,image/jpeg"/> -->
+                <input id="input-upload-image file" type="file" ref="file" class="form-control edit-image" v-if="editImage === 1" @keyup.enter="saveImage">
+                <!-- <input type="file" class="form-control image" v-if="editImage === 0" disabled> -->
+                <div class="change-the-text" @click="editImageUser" v-if="editImage === 0">Edit image</div>
+                <div id="input-upload-image" class="change-the-text" @change="handleFileUpload()" v-if="editImage === 1">Save update image</div>
+            </div>
         </div>
         <h6 class="name">{{userLogin.name}}</h6>
         <p class="user-name">@{{userLogin.username}}</p>
@@ -15,24 +22,26 @@
         <h3>Account</h3>
         <div class="info-account">
             <div class="input-number">
-                <input type="text" class="form-control edit-number" v-model="phoneNumber" v-if="editPhoneNumber === 1" @keyup.enter="save">
+                <input type="text" class="form-control edit-number" v-model="phoneNumber" v-if="editPhoneNumber === 1" @keyup.enter="saveNumber">
                 <input type="text" class="form-control number" v-model="userLogin.phoneNumber" v-if="editPhoneNumber === 0" disabled>
-                <div class="change-the-text" @click="edit" v-if="editPhoneNumber === 0">Edit phone number</div>
-                <div class="change-the-text" @click="save" v-if="editPhoneNumber === 1">Save update phone number</div>
+                <div class="change-the-text" @click="editNumber" v-if="editPhoneNumber === 0">Edit phone number</div>
+                <div class="change-the-text" @click="saveNumber" v-if="editPhoneNumber === 1">Save update phone number</div>
             </div>
             <hr>
             <div class="input-username">
-                <input type="text" class="form-control edit-username" v-model="username" v-if="editUsername === 1" @keyup.enter="save">
+                <input type="text" class="form-control edit-username" v-model="username" v-if="editUsername === 1" @keyup.enter="saveUsername">
                 <input type="text" class="form-control username" v-model="userLogin.username" v-if="editUsername === 0" disabled>
-                <div class="change-the-text" @click="edit" v-if="editUsername === 0">Edit username</div>
-                <div class="change-the-text" @click="save" v-if="editUsername === 1">Save update username</div>
+                <div class="change-the-text" @click="editUserName" v-if="editUsername === 0">Edit username</div>
+                <div class="change-the-text" @click="saveUsername" v-if="editUsername === 1">Save update username</div>
             </div>
             <hr>
             <div class="input-bio">
-                <input type="text" class="form-control" v-model="userLogin.bio" disabled>
-                <!-- <input type="text" class="form-control"> -->
-                <p>Bio</p>
+                <input type="text" class="form-control edit-bio" v-model="bio" v-if="editBio === 1" @keyup.enter="saveBio">
+                <input type="text" class="form-control bio" v-model="userLogin.bio" v-if="editBio === 0" disabled>
+                <div class="change-the-text" @click="editBioUser" v-if="editBio === 0">Edit bio</div>
+                <div class="change-the-text" @click="saveBio" v-if="editBio === 1">Save update bio</div>
             </div>
+            <hr>
         </div>
         <div class="location">
             <h3>Location</h3>
@@ -44,62 +53,148 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import Swal from 'sweetalert2'
+import $ from 'jquery'
 export default {
   name: 'Profile',
+  props: ['socket'],
   data () {
     return {
       phoneNumber: '',
       editPhoneNumber: 0,
       editUsername: 0,
       editBio: 0,
+      editImage: 0,
       username: '',
-      bio: ''
+      bio: '',
+      photoProfile: ''
     }
   },
   methods: {
     ...mapActions(['getUserById', 'update']),
-    edit () {
-      if (this.editPhoneNumber === 0 || this.editUsername === 0) {
+    editNumber () {
+      if (this.editPhoneNumber === 0) {
         this.editPhoneNumber++
+      }
+    },
+    saveNumber () {
+      if (this.editPhoneNumber > 0) {
+        this.editPhoneNumber--
+      }
+      const payload = {
+        phoneNumber: this.phoneNumber
+      }
+      this.update(payload)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Succeed',
+            text: 'Success update',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.getUserById()
+        })
+    },
+    editUserName () {
+      if (this.editUsername === 0) {
         this.editUsername++
       }
     },
-    save () {
-      if (this.editPhoneNumber > 0 || this.editUsername > 0) {
-        this.editPhoneNumber--
+    saveUsername () {
+      if (this.editUsername > 0) {
         this.editUsername--
       }
+      const payload = {
+        username: this.username
+      }
+      this.update(payload)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Succeed',
+            text: 'Success update',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.getUserById()
+        })
+    },
+    editBioUser () {
+      if (this.editBio === 0) {
+        this.editBio++
+      }
+    },
+    saveBio () {
+      if (this.editBio > 0) {
+        this.editBio--
+      }
+      const payload = {
+        bio: this.bio
+      }
+      this.update(payload)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Succeed',
+            text: 'Success update',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.getUserById()
+        })
+    },
+    editImageUser () {
+      if (this.editImage === 0) {
+        this.editImage++
+      }
+    },
+    handleFileUpload () {
+      if (this.editImage > 0) {
+        this.editImage--
+      }
+      this.photoProfile = this.$refs.file.files[0]
+      console.log(this.photoProfile)
       const form = new FormData()
-      form.append('phoneNumber', this.phoneNumber)
-      form.append('username', this.username)
+      form.append('photoProfile', this.photoProfile)
+      console.log(form)
       const payload = {
         form
       }
       this.update(payload)
-        .then(res => {
-          console.log('berhasil', res)
-        })
-        .catch(err => {
-          console.log('gagal', err)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Succeed',
+            text: 'Success update',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.getUserById()
         })
     },
-    // editUserName () {
-    //   if (this.editUsername === 0) {
-    //     this.editUsername++
-    //   }
-    // },
-    // saveUsername () {
-    //   if (this.editUsername > 0) {
-    //     this.editUsername--
-    //   }
-    // },
+    onInputUploadChange () {
+      const self = this
+      $('#input-upload-image').change(function () {
+        self.readImgUrlAndPreview(this)
+      })
+    },
+    readImgUrlAndPreview (input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader()
+        reader.onload = function (e) {
+          $('#update-photo').attr('src', e.target.result)
+        }
+        reader.readAsDataURL(input.files[0])
+      }
+    },
     handleBackSettings () {
       this.$router.push('/main/message')
     }
   },
   mounted () {
     this.getUserById()
-    this.update()
+    // this.update()
   },
   computed: {
     ...mapGetters(['userLogin'])
@@ -134,12 +229,36 @@ export default {
     text-align: center;
 }
 
+.profile .img-profile .change-the-text {
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: -0.17px;
+    color: #7E98DF;
+    margin-bottom: 30px;
+    cursor: pointer;
+}
+
+.profile .img-profile .edit-image {
+    border: none;
+    outline: none;
+    margin: 40px;
+    background: none;
+    padding-left: 0;
+}
+
+.profile .img-profile .edit-image:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+    background: none;
+}
+
 .profile .img-profile img {
-    width: 82px;
-    height: 82px;
-    object-fit: contain;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
     margin: 20px auto;
-    border-radius: 20px;
+    border-radius: 100%;
 }
 
 .profile h6 {
@@ -218,31 +337,21 @@ hr {
     background: none;
 }
 
-.menu-info .info-account .input-bio input {
-    border: 0;
-    box-shadow: 0;
-    outline: 0;
-    background: 0;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 181%;
-    color: #232323;
+.menu-info .info-account .input-bio .bio,
+.menu-info .info-account .input-bio .edit-bio {
+    border: none;
+    outline: none;
+    margin-top: 10px;
+    background: none;
     padding-left: 0;
 }
 
-.menu-info .info-account .input-bio input:focus {
+.menu-info .info-account .input-bio .bio:focus,
+.menu-info .info-account .input-bio .edit-bio :focus {
     outline: none;
     box-shadow: none;
     border: none;
     background: none;
-}
-
-.menu-info .info-account .input-bio p {
-    font-size: 16px;
-    line-height: 19px;
-    letter-spacing: -0.17px;
-    color: #848484;
-    margin-bottom: 30px;
 }
 
 .location h3 {

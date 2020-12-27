@@ -15,7 +15,8 @@ export default new Vuex.Store({
     userLogin: [],
     friends: [],
     messageSender: [],
-    messageReceiver: []
+    messageReceiver: [],
+    message: []
   },
   plugins: [createPersistedState()],
   mutations: {
@@ -35,6 +36,9 @@ export default new Vuex.Store({
     },
     SET_MESSAGE_RECEIVER (state, payload) {
       state.messageReceiver = payload
+    },
+    SET_MESSAGE (state, payload) {
+      state.message = payload
     }
   },
   actions: {
@@ -64,12 +68,12 @@ export default new Vuex.Store({
     },
     update (context, payload) {
       return new Promise((resolve, reject) => {
-        axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/${sessionStorage.getItem('id')}`, payload)
-          .then(res => {
-            console.log('data update', res.data.result)
-            const result = res.data.result
-            context.commit('SET_USER', result)
-            resolve(res)
+        console.log('ini errornya?')
+        axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/${sessionStorage.getItem('id')}`, payload, { headers: { 'Content-Type': 'multipart/form-data' } })
+        console.log('ini isi payload update', payload)
+          .then(() => {
+            // console.log('data update', res.data.result)
+            // resolve(res)
           })
           .catch(err => {
             console.log('ada error?', err.response)
@@ -91,9 +95,20 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/${router.currentRoute.query.id}`)
           .then(res => {
-            console.log('data login', res.data.result)
+            // console.log('data login', res.data.result[0])
             const result = res.data.result[0]
             context.commit('SET_USER', result)
+            resolve(res)
+          })
+      })
+    },
+    getAllMessage (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message`)
+          .then(res => {
+            console.log('all message', res.data.result)
+            const result = res.data.result
+            context.commit('SET_MESSAGE', result)
             resolve(res)
           })
       })
@@ -198,6 +213,9 @@ export default new Vuex.Store({
     },
     getMessageReceiver (state) {
       return state.messageReceiver
+    },
+    isLogin (state) {
+      return state.token !== null
     }
   },
   modules: {

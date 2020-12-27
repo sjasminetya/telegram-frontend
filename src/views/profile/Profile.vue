@@ -24,9 +24,13 @@ export default {
 </script>
 
 <style scoped>
+.container-fluid {
+    min-height: 800px;
+}
+
 .chat-list {
     background: #FFFFFF;
-    height: max-content;
+    border-right: 10px solid #7E98DF;
 }
 
 .message-content {

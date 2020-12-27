@@ -38,6 +38,7 @@
 import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'SideProfile',
+  props: ['socket'],
   methods: {
     ...mapActions(['getAll']),
     handleClick () {
@@ -102,12 +103,14 @@ export default {
     height: max-content;
     background: #FFFFFF;
     position: absolute;
-    left: 320px;
+    left: 300px;
     top: 70px;
     z-index: 1;
     /* display: none; */
     overflow: auto;
     /* overflow-x: hidden; */
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    border-radius: 20px;
 }
 
 .menu-top {

@@ -8,6 +8,7 @@ import Main from '../views/main/Main.vue'
 import Message from '../views/main/Message.vue'
 import Default from '../views/main/Default.vue'
 import Profile from '../views/profile/Profile.vue'
+import store from '../store/index'
 
 Vue.use(VueRouter)
 
@@ -33,12 +34,14 @@ const routes = [
       {
         path: 'default',
         name: 'Default',
-        component: Default
+        component: Default,
+        meta: { requiresAuth: true }
       },
       {
         path: 'message',
         name: 'Message',
-        component: Message
+        component: Message,
+        meta: { requiresAuth: true }
       }
     ]
   },
@@ -55,12 +58,14 @@ const routes = [
       {
         path: 'login',
         name: 'Login',
-        component: Login
+        component: Login,
+        meta: { requiresVisitor: true }
       },
       {
         path: 'register',
         name: 'Register',
-        component: Register
+        component: Register,
+        meta: { requiresVisitor: true }
       }
     ]
   }
@@ -70,6 +75,28 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.getters.isLogin) {
+      next({
+        path: '/auth/login'
+      })
+    } else {
+      next()
+    }
+  } else if (to.matched.some(record => record.meta.requiresVisitor)) {
+    if (store.getters.isLogin) {
+      next({
+        path: '/main/default'
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router
