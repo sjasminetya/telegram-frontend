@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-// import createPersistedState from 'vuex-persistedstate'
+import createPersistedState from 'vuex-persistedstate'
 import router from '../router/index'
 import Swal from 'sweetalert2'
 
@@ -9,8 +9,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    id: null || sessionStorage.getItem('id'),
-    token: null || sessionStorage.getItem('token'),
+    id: null || localStorage.getItem('id'),
+    token: null || localStorage.getItem('token'),
     users: [],
     userLogin: [],
     friends: [],
@@ -19,8 +19,16 @@ export default new Vuex.Store({
     message: [],
     historyMessage: []
   },
-  // plugins: [createPersistedState()],
+  plugins: [createPersistedState()],
   mutations: {
+    togglePassword (state) {
+      state.password = document.getElementById('password')
+      if (state.password.type === 'password') {
+        state.password.type = 'text'
+      } else {
+        state.password.type = 'password'
+      }
+    },
     SET_USER (state, payload) {
       state.users = payload
       state.token = payload.token
@@ -43,6 +51,9 @@ export default new Vuex.Store({
     },
     SET_HISTORY_MESSAGE (state, payload) {
       state.historyMessage = payload
+    },
+    REMOVE_TOKEN (state) {
+      state.token = null
     }
   },
   actions: {
@@ -52,8 +63,8 @@ export default new Vuex.Store({
           .then(res => {
             console.log(res.data.result)
             const result = res.data.result
-            sessionStorage.setItem('id', result.id)
-            sessionStorage.setItem('token', result.token)
+            localStorage.setItem('id', result.id)
+            localStorage.setItem('token', result.token)
             context.commit('SET_USER', result)
             resolve(result)
           })
@@ -72,21 +83,22 @@ export default new Vuex.Store({
     },
     update (context, payload) {
       return new Promise((resolve, reject) => {
-        console.log('ini errornya?')
-        axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/${sessionStorage.getItem('id')}`, payload)
-        console.log('ini isi payload update', payload)
-          .then(() => {
-            // console.log('data update', res.data.result)
-            // resolve(res)
+        // console.log('ini errornya?')
+        axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/${localStorage.getItem('id')}`, payload)
+        // console.log('ini isi payload update', payload)
+          .then((res) => {
+            console.log('data update', res.data.result)
+            resolve(res)
           })
           .catch(err => {
             console.log('ada error?', err.response)
+            reject(err)
           })
       })
     },
     getUserById (context, payload) {
       return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/${sessionStorage.getItem('id')}`)
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/${localStorage.getItem('id')}`)
           .then(res => {
             console.log('data login', res.data.result)
             const result = res.data.result[0]
@@ -99,7 +111,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/${router.currentRoute.query.id}`)
           .then(res => {
-            // console.log('data login', res.data.result[0])
+            console.log('data friends', res.data.result[0])
             const result = res.data.result[0]
             context.commit('SET_USER', result)
             resolve(res)
@@ -108,7 +120,7 @@ export default new Vuex.Store({
     },
     getAllHistory (context, payload) {
       return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/history/${sessionStorage.getItem('id')}/${router.currentRoute.query.id}`)
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/history/${localStorage.getItem('id')}/${router.currentRoute.query.id}`)
           .then(res => {
             const result = res.data.result
             console.log('all history', res.data.result)
@@ -130,7 +142,7 @@ export default new Vuex.Store({
     },
     getFriends (context, payload) {
       return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/friends/${sessionStorage.getItem('id')}`)
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/friends/${localStorage.getItem('id')}`)
           .then(res => {
             console.log('data friends', res.data.result)
             const result = res.data.result
@@ -141,7 +153,7 @@ export default new Vuex.Store({
     },
     senderMessage (context) {
       return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/sender/${sessionStorage.getItem('id')}`)
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/sender/${localStorage.getItem('id')}`)
           .then(res => {
             console.log('data message sender', res.data.result)
             const result = res.data.result
@@ -163,7 +175,7 @@ export default new Vuex.Store({
     },
     interceptorRequest (context) {
       axios.interceptors.request.use(function (config) {
-        config.headers.Authorization = `Bearer ${sessionStorage.getItem('token')}`
+        config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
         return config
       }, function (error) {
         return Promise.reject(error)
@@ -171,15 +183,22 @@ export default new Vuex.Store({
     },
     interceptorResponse (context) {
       axios.interceptors.response.use(function (response) {
-        if (response.data.statusCode === 200) {
-          if (response.data.result.message === 'Success register') {
+        if (response.data.status_code === 200) {
+          if (response.data.result.message === 'Success register, please check your email to verify') {
             Swal.fire({
               icon: 'success',
-              title: 'Success register',
+              title: 'Success register, check your email to confirmation',
               showConfirmButton: false,
               timer: 2000
             })
             router.push('/auth/login')
+          } else if (response.data.result.message === 'data successfull update') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success update',
+              showConfirmButton: false,
+              timer: 2000
+            })
           }
         }
         return response
@@ -201,8 +220,47 @@ export default new Vuex.Store({
               showConfirmButton: false,
               timer: 2000
             })
+          } else if (error.response.data.err.message === 'invalid token') {
+            localStorage.removeItem('token')
+            localStorage.removeItem('id')
+            context.commit('REMOVE_TOKEN')
+            Swal.fire({
+              icon: 'error',
+              title: 'Dont change token',
+              showConfirmButton: false,
+              timer: 2000
+            })
+            router.push('/auth/login')
+          } else if (error.response.data.err.message === 'token expired') {
+            localStorage.removeItem('token')
+            localStorage.removeItem('id')
+            context.commit('REMOVE_TOKEN')
+            Swal.fire({
+              icon: 'error',
+              title: 'Token expired, please login again',
+              showConfirmButton: false,
+              timer: 2000
+            })
+            router.push('/auth/login')
+          } else if (error.response.data.err.error === 'please confirm your email to login') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Login failed, please confirmation your email',
+              showConfirmButton: false,
+              timer: 2000
+            })
+          }
+        } else if (error.response.data.status_code === 404) {
+          if (error.response.data.err.message === 'email and password cannot be empty') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Email not found',
+              showConfirmButton: false,
+              timer: 2000
+            })
           }
         }
+        return Promise.reject(error)
       })
     }
   },

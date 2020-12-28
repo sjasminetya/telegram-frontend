@@ -5,11 +5,16 @@
         <form>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" v-model="email" class="form-control" id="email">
+                <input type="email" v-model.trim="$v.email.$model" :class="{ 'is-invalid': validationStatus($v.email) }" class="form-control" placeholder="Enter your email address">
+                <div class="invalid-feedback" v-if="!$v.email.required">Field is required.</div>
+                <div class="invalid-feedback" v-if="!$v.email.email">invalid email</div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" v-model="password" class="form-control icon-password" id="password">
+                <input type="password" id="password" v-model.trim="$v.password.$model" :class="{ 'is-invalid': validationStatus($v.password) }" class="form-control icon-password" placeholder="Enter your password">
+                <input type="checkbox" class="toggle-password" @click="togglePassword">
+                <div class="invalid-feedback" v-if="!$v.password.required">Field is required.</div>
+                <div class="invalid-feedback" v-if="!$v.password.minLength">Field must have at least {{ $v.password.$params.minLength.min }} characters.</div>
             </div>
             <div class="form-group">
                 <router-link to="#" class="forgot-password">Forgot Password?</router-link>
@@ -26,8 +31,9 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import Swal from 'sweetalert2'
+import { required, minLength, email } from 'vuelidate/lib/validators'
 export default {
   name: 'Login',
   data () {
@@ -36,9 +42,18 @@ export default {
       password: ''
     }
   },
+  validations: {
+    email: { required, email },
+    password: { required, minLength: minLength(6) }
+  },
   methods: {
+    validationStatus (validation) {
+      return typeof validation !== 'undefined' ? validation.$error : false
+    },
     ...mapActions(['login']),
     goLogin () {
+      this.$v.$touch()
+      if (this.$v.$pendding || this.$v.$error) return
       const payload = {
         email: this.email,
         password: this.password
@@ -53,7 +68,8 @@ export default {
           })
           this.$router.push('/main/default')
         })
-    }
+    },
+    ...mapMutations(['togglePassword'])
   }
 }
 </script>
@@ -98,6 +114,7 @@ form input {
     border: none;
     border-bottom: 1px solid #232323;
     max-width: 360px;
+    box-sizing: border-box;
 }
 
 form input:focus {
@@ -106,10 +123,31 @@ form input:focus {
     box-shadow: none;
 }
 
+form .is-invalid {
+    border-bottom: 1px solid red;
+}
+
+form .is-invalid:focus {
+    border-bottom: 1px solid red;
+    box-shadow: none;
+}
+
+form .invalid-feedback {
+    padding-left: 40px;
+}
+
 form .icon-password {
     background-image: url('../../assets/eye.png');
     background-repeat: no-repeat;
     background-position: right;
+    cursor: pointer;
+}
+
+form .toggle-password {
+    position: absolute;
+    top: 308px;
+    left: 360px;
+    opacity: 0;
 }
 
 form .forgot-password {

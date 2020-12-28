@@ -56,6 +56,7 @@ export default {
     overflow: auto;
     z-index: 1;
     right: 0px;
+    margin-top: 10px;
 }
 
 .menu-content a {
@@ -65,8 +66,8 @@ export default {
     color: #FFFFFF;
     display: block;
     text-decoration: none;
-    padding: 12px 20px;
-    margin-top: 10px;
+    padding: 12px 25px;
+    margin-top: 15px;
 }
 
 .show {

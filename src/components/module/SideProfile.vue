@@ -26,7 +26,21 @@
 
                     <div class="location">
                         <h3>Location</h3>
-                        <div class="map"></div>
+                        <div class="map">
+                            <GmapMap
+                                :center="{lat:parseFloat(getUser.lat), lng:parseFloat(getUser.lng)}"
+                                :zoom="7"
+                                map-type-id="terrain"
+                                style="width: 290px; height: 200px"
+                            >
+                                <GmapMarker
+                                :position="{lat:parseFloat(getUser.lat), lng:parseFloat(getUser.lng)}"
+                                :clickable="true"
+                                :draggable="true"
+                                @click="center=m.position"
+                                />
+                            </GmapMap>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -39,30 +53,21 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'SideProfile',
   props: ['socket'],
+  //   data () {
+  //     return {
+  //       lat: 0,
+  //       lng: 0
+  //     }
+  //   },
   methods: {
     ...mapActions(['getAll']),
     handleClick () {
-    //   document.getElementById('profileMenu').classList.toggle('show')
       document.getElementById('profileMenu').style.width = '349px'
     },
 
     handleClose () {
       document.getElementById('profileMenu').style.width = '0px'
     }
-
-    // handleMenu () {
-    //   window.onclick = function (event) {
-    //     if (!event.target.matches('.icon-profile')) {
-    //       const dropmenu = document.getElementsByClassName('menu-content')
-    //       for (let i = 0; i < dropmenu.length; i++) {
-    //         const openMenu = dropmenu[i]
-    //         if (openMenu.classList.contains('show')) {
-    //           openMenu.classList.remove('show')
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
   },
   mounted () {
     this.getAll()
@@ -92,7 +97,7 @@ export default {
     height: auto;
     object-fit: cover;
     position: absolute;
-    right: 20px;
+    right: 50px;
     top: 45px;
     cursor: pointer;
 }
@@ -103,8 +108,8 @@ export default {
     height: max-content;
     background: #FFFFFF;
     position: absolute;
-    left: 230px;
-    top: 70px;
+    left: 320px;
+    top: 40px;
     z-index: 1;
     /* display: none; */
     overflow: auto;
@@ -131,8 +136,7 @@ export default {
     font-size: 24px;
     line-height: 28px;
     color: #7E98DF;
-    margin: 10px 100px;
-    text-align: center;
+    padding-left: 50px;
 }
 
 .profile {
@@ -146,8 +150,9 @@ export default {
 }
 
 .profile .img-profile img {
-    width: 82px;
-    height: 82px;
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
     object-fit: contain;
     margin: 20px auto;
 }

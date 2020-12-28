@@ -8,15 +8,21 @@
         <form>
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" v-model="name" class="form-control" id="name">
+                <input type="text" id="name" v-model.trim="$v.name.$model" :class="{ 'is-invalid': validationStatus($v.name) }" class="form-control" placeholder="Enter your name">
+                <div class="invalid-feedback" v-if="!$v.name.required">Field is required.</div>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" v-model="email" class="form-control" id="email">
+                <input type="email" v-model.trim="$v.email.$model" :class="{ 'is-invalid': validationStatus($v.email) }" class="form-control" placeholder="Enter your email address">
+                <div class="invalid-feedback" v-if="!$v.email.required">Field is required.</div>
+                <div class="invalid-feedback" v-if="!$v.email.email">invalid email</div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" v-model="password" class="form-control icon-password" id="password">
+                <input type="password" id="password" v-model.trim="$v.password.$model" :class="{ 'is-invalid': validationStatus($v.password) }" class="form-control icon-password" placeholder="Enter your password">
+                <input type="checkbox" class="toggle-password" @click="togglePassword">
+                <div class="invalid-feedback" v-if="!$v.password.required">Field is required.</div>
+                <div class="invalid-feedback" v-if="!$v.password.minLength">Field must have at least {{ $v.password.$params.minLength.min }} characters.</div>
             </div>
             <div class="form-group button-group">
                 <button type="submit" class="btn btn-register" @click.prevent="goRegister">Register</button>
@@ -27,8 +33,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import Swal from 'sweetalert2'
+import { required, minLength, email } from 'vuelidate/lib/validators'
+import { mapMutations, mapActions } from 'vuex'
 export default {
   name: 'Register',
   data () {
@@ -38,31 +44,35 @@ export default {
       password: ''
     }
   },
+  validations: {
+    email: { required, email },
+    password: { required, minLength: minLength(6) },
+    name: { required }
+  },
   methods: {
+    validationStatus (validation) {
+      return typeof validation !== 'undefined' ? validation.$error : false
+    },
     handleBack () {
       this.$router.push('/auth/login')
     },
     ...mapActions(['register']),
     goRegister () {
+      this.$v.$touch()
+      if (this.$v.$pendding || this.$v.$error) return
       const payload = {
         name: this.name,
         email: this.email,
         password: this.password
       }
       this.register(payload)
-        .then(res => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Success register',
-            showConfirmButton: false,
-            timer: 2000
-          })
-          this.$router.push('/auth/login')
+        .then(() => {
         })
         .catch(err => {
           console.log('error register?', err)
         })
-    }
+    },
+    ...mapMutations(['togglePassword'])
   }
 }
 </script>
@@ -72,6 +82,7 @@ export default {
     position: absolute;
     top: 55px;
     left: 50px;
+    cursor: pointer;
 }
 
 h1 {
@@ -113,6 +124,7 @@ form input {
     border: none;
     border-bottom: 1px solid #232323;
     max-width: 360px;
+    box-sizing: border-box;
 }
 
 form input:focus {
@@ -121,10 +133,31 @@ form input:focus {
     box-shadow: none;
 }
 
+form .is-invalid {
+    border-bottom: 1px solid red;
+}
+
+form .is-invalid:focus {
+    border-bottom: 1px solid red;
+    box-shadow: none;
+}
+
+form .invalid-feedback {
+    padding-left: 40px;
+}
+
 form .icon-password {
     background-image: url('../../assets/eye.png');
     background-repeat: no-repeat;
     background-position: right;
+    cursor: pointer;
+}
+
+form .toggle-password {
+    position: absolute;
+    top: 390px;
+    left: 360px;
+    opacity: 0;
 }
 
 form .forgot-password {

@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-4 chat-list">
+            <div class="col-lg-4 edit-profile">
                 <Profile/>
             </div>
             <div class="col-lg-8 message-content">
@@ -28,9 +28,8 @@ export default {
     min-height: 800px;
 }
 
-.chat-list {
+.edit-profile {
     background: #FFFFFF;
-    border-right: 10px solid #7E98DF;
 }
 
 .message-content {

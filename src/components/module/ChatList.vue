@@ -36,7 +36,14 @@ export default {
   methods: {
     ...mapActions(['getFriends']),
     goMessage (id) {
-      this.$router.push({ name: 'Message', query: { id: id } })
+    //   this.$router.push({ name: 'Message', query: { id: id } })
+      this.$router.push({
+        path: '/main/message',
+        query: {
+          id: id,
+          t: new Date().getTime()
+        }
+      })
     }
   },
   mounted () {
@@ -54,7 +61,7 @@ export default {
     display: flex;
     justify-content: space-between;
     margin-top: 50px;
-    margin-left: 50px;
+    margin-left: 20px;
 }
 
 .menu-top h1 {
@@ -75,7 +82,7 @@ export default {
 .menu-search input {
     background: #FAFAFA;
     border-radius: 15px;
-    width: 250px;
+    width: 320px;
     height: 60px;
     background-image: url('../../assets/search.png');
     background-repeat: no-repeat;
@@ -93,6 +100,7 @@ export default {
     flex-direction: column;
     margin-top: 40px;
     justify-content: center;
+    position: relative;
 }
 
 .menu-chat-list h1 {
@@ -117,11 +125,16 @@ export default {
     padding-left: 30px;
 }
 
+.menu-chat-list .form-chat .time {
+    position: absolute;
+    right: 20px;
+}
+
 .menu-chat-list .form-chat .img-profile img{
     width: 64px;
     height: 64px;
-    object-fit: contain;
-    border-radius: 20px;
+    object-fit: cover;
+    border-radius: 100%;
 }
 
 .menu-chat-list .form-chat .name-message {

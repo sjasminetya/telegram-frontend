@@ -11,7 +11,7 @@
             <SideProfile/>
         </div>
 
-        <div class="message-content" id="messageBody">
+        <div class="message-content">
             <div class="message" v-for="history in historyChat" :key="history.id">
                 <div class="receiver" v-if="history.senderId === getUser.id">
                     <img :src="getUser.photoProfile" alt="receiver profile">
@@ -34,16 +34,16 @@
 
             <!-- message -->
             <div class="message" v-for="msg in messages" :key="msg.id">
-                <div class="receiver" v-if="msg.senderId === getUser.id && msg.receiverId === userLogin.id">
+                <div class="receiver" v-if="msg.senderId === getUser.id">
                     <img :src="getUser.photoProfile" alt="receiver profile">
                     <div class="the-message">
                         <h6>{{msg.message}}</h6>
                     </div>
-                    <h6>{{history.time}}</h6>
+                    <h6>{{msg.time}}</h6>
                 </div>
 
-                <div class="sender" v-else-if="msg.senderId === userLogin.id && msg.receiverId === getUser.id">
-                    <h6>{{history.time}}</h6>
+                <div class="sender" v-else-if="msg.senderId === userLogin.id">
+                    <h6>{{msg.time}}</h6>
                     <div class="the-message">
                         <h6>{{msg.message}}</h6>
                     </div>
@@ -54,9 +54,9 @@
             </div>
         </div>
 
-        <div class="footer-message">
+        <footer class="footer-message">
             <input type="text" v-model="inputMessage" placeholder="Type your message..." class="form-control icon-send" @keyup.enter="handleClick">
-        </div>
+        </footer>
     </div>
 </template>
 
@@ -81,9 +81,6 @@ export default {
   components: {
     SideProfile
   },
-  //   created () {
-  //     this.scroll()
-  //   },
   methods: {
     ...mapActions(['getUserById', 'getAll', 'getAllMessage', 'getAllHistory']),
     clickProfile () {
@@ -93,23 +90,12 @@ export default {
       this.socket.emit('receiverMessage', { message: this.inputMessage, senderId: this.userLogin.id, receiverId: this.getUser.id })
       this.inputMessage = ''
     }
-    // scroll () {
-    //   window.addEventListener('scroll', () => {
-    //     const { scrollTop, scrollHeight, clientHeight } = document.documentElement
-    //     console.log('scroll', { scrollTop, scrollHeight, clientHeight })
-
-    //     if (clientHeight + scrollTop >= scrollHeight) {
-    //       console.log('bottom')
-    //       this.getAllHistory()
-    //     }
-    //   })
-    // }
   },
   mounted () {
     this.getUserById()
     this.getAll()
     this.getAllHistory()
-    const senderId = sessionStorage.getItem('id')
+    const senderId = localStorage.getItem('id')
     this.senderId = senderId
     this.socket.emit('initialUser', { senderId })
     this.socket.on('kirimkembali', (data) => {
@@ -124,15 +110,6 @@ export default {
 </script>
 
 <style scoped>
-/* .menu-message {
-    max-height: 10px;
-} */
-
-#messageBody {
-    overflow: auto;
-    height: 500px;
-}
-
 .nav-profile {
     display: flex;
     background: #FFFFFF;
@@ -152,10 +129,10 @@ export default {
 }
 
 .nav-profile .img-profile img {
-    width: 64px;
-    height: 64px;
-    object-fit: contain;
-    border-radius: 20px;
+    width: 62px;
+    height: 62px;
+    object-fit: cover;
+    border-radius: 100%;
     margin-top: 25px;
     margin-left: 80px;
 }
@@ -165,11 +142,6 @@ export default {
     flex-direction: column;
     margin-top: 30px;
     margin-left: 20px;
-}
-
-.message-content {
-    padding-bottom: 150px;
-    height: 100%;
 }
 
 .message {
@@ -187,8 +159,15 @@ export default {
     float: left;
 }
 
+.message .receiver img {
+    width: 82px;
+    height: 82px;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
 .message .sender {
-    align-self: flex-start;
+    align-self: flex-end;
 }
 
 .message img {
@@ -227,18 +206,29 @@ export default {
 .message .sender .img-profile img {
     width: 82px;
     height: 82px;
-    object-fit: contain;
+    object-fit: cover;
     margin-right: 60px;
-    border-radius: 20px;
+    border-radius: 100%;
     cursor: pointer;
 }
 
-.footer-message {
+footer {
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:120px;
+
+    background: #FFFFFF;
+
+}
+
+/* .footer-message {
     width: 100%;
     height: 90px;
     background: #FFFFFF;
     position: absolute;
-}
+    bottom: 0;
+} */
 
 .footer-message input {
     background: #FAFAFA;

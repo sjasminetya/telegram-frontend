@@ -8,7 +8,7 @@ import Main from '../views/main/Main.vue'
 import Message from '../views/main/Message.vue'
 import Default from '../views/main/Default.vue'
 import Profile from '../views/profile/Profile.vue'
-// import store from '../store/index'
+import store from '../store/index'
 
 Vue.use(VueRouter)
 
@@ -48,7 +48,8 @@ const routes = [
   {
     path: '/profile',
     name: 'Profile',
-    component: Profile
+    component: Profile,
+    meta: { requiresAuth: true }
   },
   {
     path: '/auth',
@@ -77,26 +78,26 @@ const router = new VueRouter({
   routes
 })
 
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     if (!store.getters.isLogin) {
-//       next({
-//         path: '/auth/login'
-//       })
-//     } else {
-//       next()
-//     }
-//   } else if (to.matched.some(record => record.meta.requiresVisitor)) {
-//     if (store.getters.isLogin) {
-//       next({
-//         path: '/main/default'
-//       })
-//     } else {
-//       next()
-//     }
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.getters.isLogin) {
+      next({
+        path: '/auth/login'
+      })
+    } else {
+      next()
+    }
+  } else if (to.matched.some(record => record.meta.requiresVisitor)) {
+    if (store.getters.isLogin) {
+      next({
+        path: '/main/default'
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
 
 export default router
