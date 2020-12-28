@@ -103,7 +103,7 @@ export default {
     height: max-content;
     background: #FFFFFF;
     position: absolute;
-    left: 300px;
+    left: 230px;
     top: 70px;
     z-index: 1;
     /* display: none; */

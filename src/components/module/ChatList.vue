@@ -16,7 +16,7 @@
             </div>
             <div class="name-message">
                 <h6 class="username">{{friend.name}}</h6>
-                <p class="message">{{friend.email}}</p>
+                <p class="message"></p>
             </div>
             <p class="time">15.12</p>
         </div>

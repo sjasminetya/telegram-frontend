@@ -4,7 +4,7 @@
             <div class="col-lg-4 chat-list">
                 <ChatList/>
             </div>
-            <div class="col-lg-8 message-content">
+            <div class="col-lg-8 message-main">
                 <router-view :socket = "socket" />
             </div>
         </div>
@@ -28,26 +28,18 @@ export default {
 </script>
 
 <style scoped>
-.container-fluid {
+/* .container-fluid {
     min-height: 800px;
-}
+} */
 
 .chat-list {
     background: #FFFFFF;
-    border-right: 10px solid #7E98DF;
 }
 
-.message-content {
+.message-main {
     background: #FAFAFA;
     display: flex;
     flex-direction: column;
-}
-
-.message-content h1 {
-    font-size: 24px;
-    line-height: 28px;
-    color: #848484;
-    text-align: center;
 }
 
 .col-lg-8 {

@@ -28,6 +28,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import Swal from 'sweetalert2'
 export default {
   name: 'Register',
   data () {
@@ -50,7 +51,13 @@ export default {
       }
       this.register(payload)
         .then(res => {
-          console.log(res.data.result)
+          Swal.fire({
+            icon: 'success',
+            title: 'Success register',
+            showConfirmButton: false,
+            timer: 2000
+          })
+          this.$router.push('/auth/login')
         })
         .catch(err => {
           console.log('error register?', err)

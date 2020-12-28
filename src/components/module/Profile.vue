@@ -6,14 +6,7 @@
     </div>
     <div class="profile">
         <div class="img-profile">
-            <img id="update-photo" :src="userLogin.photoProfile" alt="user photo">
-            <div class="edit-image">
-                <!-- <input id="input-upload-image" type="file" accept="image/x-png/,image/gif,image/jpeg"/> -->
-                <input id="input-upload-image file" type="file" ref="file" class="form-control edit-image" v-if="editImage === 1" @keyup.enter="saveImage">
-                <!-- <input type="file" class="form-control image" v-if="editImage === 0" disabled> -->
-                <div class="change-the-text" @click="editImageUser" v-if="editImage === 0">Edit image</div>
-                <div id="input-upload-image" class="change-the-text" @change="handleFileUpload()" v-if="editImage === 1">Save update image</div>
-            </div>
+            <img :src="userLogin.photoProfile" alt="user photo">
         </div>
         <h6 class="name">{{userLogin.name}}</h6>
         <p class="user-name">@{{userLogin.username}}</p>
@@ -54,7 +47,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Swal from 'sweetalert2'
-import $ from 'jquery'
 export default {
   name: 'Profile',
   props: ['socket'],
@@ -144,52 +136,8 @@ export default {
           this.getUserById()
         })
     },
-    editImageUser () {
-      if (this.editImage === 0) {
-        this.editImage++
-      }
-    },
-    handleFileUpload () {
-      if (this.editImage > 0) {
-        this.editImage--
-      }
-      this.photoProfile = this.$refs.file.files[0]
-      console.log(this.photoProfile)
-      const form = new FormData()
-      form.append('photoProfile', this.photoProfile)
-      console.log(form)
-      const payload = {
-        form
-      }
-      this.update(payload)
-        .then(() => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Succeed',
-            text: 'Success update',
-            showConfirmButton: false,
-            timer: 1500
-          })
-          this.getUserById()
-        })
-    },
-    onInputUploadChange () {
-      const self = this
-      $('#input-upload-image').change(function () {
-        self.readImgUrlAndPreview(this)
-      })
-    },
-    readImgUrlAndPreview (input) {
-      if (input.files && input.files[0]) {
-        var reader = new FileReader()
-        reader.onload = function (e) {
-          $('#update-photo').attr('src', e.target.result)
-        }
-        reader.readAsDataURL(input.files[0])
-      }
-    },
     handleBackSettings () {
-      this.$router.push('/main/message')
+      this.$router.push('/main/default')
     }
   },
   mounted () {

@@ -5,20 +5,20 @@
                 <Profile/>
             </div>
             <div class="col-lg-8 message-content">
-                <Message/>
+                <Default/>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import Message from '../main/Message'
+import Default from '../main/Default'
 import Profile from '../../components/module/Profile'
 export default {
   name: 'Main',
   components: {
     Profile,
-    Message
+    Default
   }
 }
 </script>

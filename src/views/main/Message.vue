@@ -11,17 +11,39 @@
             <SideProfile/>
         </div>
 
-        <div class="message-content">
+        <div class="message-content" id="messageBody">
+            <div class="message" v-for="history in historyChat" :key="history.id">
+                <div class="receiver" v-if="history.senderId === getUser.id">
+                    <img :src="getUser.photoProfile" alt="receiver profile">
+                    <div class="the-message">
+                        <h6>{{history.message}}</h6>
+                    </div>
+                    <h6>{{history.time}}</h6>
+                </div>
+
+                <div class="sender" v-else-if="history.senderId === userLogin.id">
+                    <h6>{{history.time}}</h6>
+                    <div class="the-message">
+                        <h6>{{history.message}}</h6>
+                    </div>
+                    <div class="img-profile">
+                        <img @click.prevent="clickProfile" :src="userLogin.photoProfile" alt="sender profile">
+                    </div>
+                </div>
+            </div>
+
+            <!-- message -->
             <div class="message" v-for="msg in messages" :key="msg.id">
-                <div class="receiver" v-if="msg.senderId === msg.cekReceiver && msg.receiverId === msg.cekSender">
+                <div class="receiver" v-if="msg.senderId === getUser.id && msg.receiverId === userLogin.id">
                     <img :src="getUser.photoProfile" alt="receiver profile">
                     <div class="the-message">
                         <h6>{{msg.message}}</h6>
                     </div>
-                    <!-- <h6>{{receiverMessage.time}}</h6> -->
+                    <h6>{{history.time}}</h6>
                 </div>
 
-                <div class="sender" v-else-if="msg.senderId === msg.cekSender && msg.receiverId === msg.cekReceiver">
+                <div class="sender" v-else-if="msg.senderId === userLogin.id && msg.receiverId === getUser.id">
+                    <h6>{{history.time}}</h6>
                     <div class="the-message">
                         <h6>{{msg.message}}</h6>
                     </div>
@@ -29,11 +51,6 @@
                         <img @click.prevent="clickProfile" :src="userLogin.photoProfile" alt="sender profile">
                     </div>
                 </div>
-
-                <!-- <ul class="list-group">
-                    <li class="list-group-item active">Name room: {{userLogin.name}}</li>
-                    <li class="list-group-item" v-for="(msg, index) in messages" :key="index">{{msg.senderId}}=>{{msg.message}}</li>
-                </ul> -->
             </div>
         </div>
 
@@ -56,64 +73,64 @@ export default {
       messages: [],
       inputMessage: '',
       cekReceiver: '',
-      cekSender: ''
+      cekSender: '',
+      historyMessage: []
     }
   },
   props: ['socket'],
   components: {
     SideProfile
   },
+  //   created () {
+  //     this.scroll()
+  //   },
   methods: {
-    ...mapActions(['getUserById', 'getAll', 'senderMessage', 'receiverMessage', 'getAllMessage']),
+    ...mapActions(['getUserById', 'getAll', 'getAllMessage', 'getAllHistory']),
     clickProfile () {
       this.$router.push('/profile')
     },
     handleClick () {
-      this.socket.emit('receiverMessage', { message: this.inputMessage, senderId: this.senderId, receiverId: this.getUser.id, name: this.userLogin.name })
+      this.socket.emit('receiverMessage', { message: this.inputMessage, senderId: this.userLogin.id, receiverId: this.getUser.id })
       this.inputMessage = ''
     }
+    // scroll () {
+    //   window.addEventListener('scroll', () => {
+    //     const { scrollTop, scrollHeight, clientHeight } = document.documentElement
+    //     console.log('scroll', { scrollTop, scrollHeight, clientHeight })
+
+    //     if (clientHeight + scrollTop >= scrollHeight) {
+    //       console.log('bottom')
+    //       this.getAllHistory()
+    //     }
+    //   })
+    // }
   },
   mounted () {
     this.getUserById()
     this.getAll()
-    this.getAllMessage()
-      .then(res => {
-        this.socket.on('kirimkembali', (data) => {
-          console.log('kirim kembali', data)
-          const dataMessage = res.data.result
-          const cekReceiver = this.getUser.id
-          const cekSender = sessionStorage.getItem('id')
-          this.cekReceiver = cekReceiver
-          this.cekSender = cekSender
-          console.log('data message', res.data.result)
-          for (const all of dataMessage) {
-            all.cekSender = cekSender
-            all.cekReceiver = cekReceiver
-          }
-
-          data.cekSender = cekSender
-          data.cekReceiver = cekReceiver
-          this.messages.push(data)
-        })
-      })
+    this.getAllHistory()
     const senderId = sessionStorage.getItem('id')
     this.senderId = senderId
     this.socket.emit('initialUser', { senderId })
-    // this.socket.on('kirimkembali', (data) => {
-    //   console.log(data)
-    //   this.messages.push(data)
-    // })
+    this.socket.on('kirimkembali', (data) => {
+      console.log('data message dari backend', data)
+      this.messages.push(data)
+    })
   },
   computed: {
-    ...mapGetters(['userLogin', 'getUser'])
+    ...mapGetters(['userLogin', 'getUser', 'historyChat'])
   }
 }
 </script>
 
 <style scoped>
-.menu-message {
-    display: flex;
-    flex-direction: column;
+/* .menu-message {
+    max-height: 10px;
+} */
+
+#messageBody {
+    overflow: auto;
+    height: 500px;
 }
 
 .nav-profile {
@@ -122,9 +139,7 @@ export default {
     width: 100%;
     height: 120px;
     position: relative;
-    /* border-bottom-right-radius: 50px; */
-    border-bottom: 10px solid #7E98DF;
-    border-radius: 50px;
+    border-bottom-right-radius: 50px;
 }
 
 .nav-profile .icon-profile {
@@ -153,14 +168,8 @@ export default {
 }
 
 .message-content {
-    height: 800px;
-    overflow: auto; /* scrollbar */
-    -ms-overflow-style: none;  /* scrollbar */
-    scrollbar-width: none; /* scrollbar */
-}
-
-.message-content::-webkit-scrollbar {
-    display: none;
+    padding-bottom: 150px;
+    height: 100%;
 }
 
 .message {
@@ -179,7 +188,7 @@ export default {
 }
 
 .message .sender {
-    align-self: flex-end;
+    align-self: flex-start;
 }
 
 .message img {
@@ -226,12 +235,9 @@ export default {
 
 .footer-message {
     width: 100%;
-    height: 120px;
+    height: 90px;
     background: #FFFFFF;
     position: absolute;
-    bottom: 0;
-    border-top: 10px solid #7E98DF;
-    border-radius: 50px;
 }
 
 .footer-message input {

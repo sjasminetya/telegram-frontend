@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import createPersistedState from 'vuex-persistedstate'
+// import createPersistedState from 'vuex-persistedstate'
 import router from '../router/index'
 import Swal from 'sweetalert2'
 
@@ -16,9 +16,10 @@ export default new Vuex.Store({
     friends: [],
     messageSender: [],
     messageReceiver: [],
-    message: []
+    message: [],
+    historyMessage: []
   },
-  plugins: [createPersistedState()],
+  // plugins: [createPersistedState()],
   mutations: {
     SET_USER (state, payload) {
       state.users = payload
@@ -39,6 +40,9 @@ export default new Vuex.Store({
     },
     SET_MESSAGE (state, payload) {
       state.message = payload
+    },
+    SET_HISTORY_MESSAGE (state, payload) {
+      state.historyMessage = payload
     }
   },
   actions: {
@@ -69,7 +73,7 @@ export default new Vuex.Store({
     update (context, payload) {
       return new Promise((resolve, reject) => {
         console.log('ini errornya?')
-        axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/${sessionStorage.getItem('id')}`, payload, { headers: { 'Content-Type': 'multipart/form-data' } })
+        axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/${sessionStorage.getItem('id')}`, payload)
         console.log('ini isi payload update', payload)
           .then(() => {
             // console.log('data update', res.data.result)
@@ -98,6 +102,17 @@ export default new Vuex.Store({
             // console.log('data login', res.data.result[0])
             const result = res.data.result[0]
             context.commit('SET_USER', result)
+            resolve(res)
+          })
+      })
+    },
+    getAllHistory (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/history/${sessionStorage.getItem('id')}/${router.currentRoute.query.id}`)
+          .then(res => {
+            const result = res.data.result
+            console.log('all history', res.data.result)
+            context.commit('SET_HISTORY_MESSAGE', result)
             resolve(res)
           })
       })
@@ -157,10 +172,10 @@ export default new Vuex.Store({
     interceptorResponse (context) {
       axios.interceptors.response.use(function (response) {
         if (response.data.statusCode === 200) {
-          if (response.data.result.message === 'Please check your email for activation account') {
+          if (response.data.result.message === 'Success register') {
             Swal.fire({
               icon: 'success',
-              title: 'Success register. Please check your email for activation account',
+              title: 'Success register',
               showConfirmButton: false,
               timer: 2000
             })
@@ -179,14 +194,7 @@ export default new Vuex.Store({
             })
           }
         } else if (error.response.data.status_code === 401) {
-          if (error.response.data.err.error === 'please confirm your email to login') {
-            Swal.fire({
-              icon: 'error',
-              title: 'please confirm your email to login',
-              showConfirmButton: false,
-              timer: 2000
-            })
-          } else if (error.response.data.err.error === 'Login failed, wrong password') {
+          if (error.response.data.err.error === 'Login failed, wrong password') {
             Swal.fire({
               icon: 'error',
               title: 'Login failed, wrong password',
@@ -216,6 +224,9 @@ export default new Vuex.Store({
     },
     isLogin (state) {
       return state.token !== null
+    },
+    historyChat (state) {
+      return state.historyMessage
     }
   },
   modules: {
