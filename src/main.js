@@ -11,7 +11,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.use(VueGoogleMaps, {
   load: {
-    key: 'AIzaSyAJDSFzgTS4W_EJDtnFHee1_2gIvhwW5ro',
+    key: process.env.GOOGLE_KEY,
     libraries: 'geometry' // This is required when working with polygons
   }
 })

@@ -98,9 +98,10 @@ export default {
     const senderId = localStorage.getItem('id')
     this.senderId = senderId
     this.socket.emit('initialUser', { senderId })
-    this.socket.on('kirimkembali', (data) => {
+    this.socket.on('kirimkembali', async (data) => {
       console.log('data message dari backend', data)
-      this.messages.push(data)
+      await this.messages.push(data)
+      console.log(this.messages)
     })
   },
   computed: {
