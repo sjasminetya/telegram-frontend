@@ -5,15 +5,15 @@
             <div id="profileMenu" class="menu-content">
                 <div class="menu-top">
                     <img src="../../assets/back.png" @click.prevent="handleClose" alt="arrow back">
-                    <h6 class="username">@{{getUser.username}}</h6>
+                    <h6 class="username">@{{messageToFriends.username}}</h6>
                 </div>
                 <div class="profile">
                     <div class="img-profile">
-                        <img :src="getUser.photoProfile" alt="user photo">
+                        <img :src="messageToFriends.photoProfile" alt="user photo">
                     </div>
                     <div class="profile-content">
                         <div class="info-profile">
-                            <h6 class="name">{{getUser.name}}</h6>
+                            <h6 class="name">{{messageToFriends.name}}</h6>
                             <p class="status">Online</p>
                         </div>
                         <img src="../../assets/chat.png" alt="icon chat">
@@ -21,20 +21,20 @@
 
                     <div class="info-contact">
                         <h6>Phone Number</h6>
-                        <p>{{getUser.phoneNumber}}</p>
+                        <p>{{messageToFriends.phoneNumber}}</p>
                     </div>
 
                     <div class="location">
                         <h3>Location</h3>
                         <div class="map">
                             <GmapMap
-                                :center="{lat:parseFloat(getUser.lat), lng:parseFloat(getUser.lng)}"
+                                :center="{lat:parseFloat(messageToFriends.lat), lng:parseFloat(messageToFriends.lng)}"
                                 :zoom="7"
                                 map-type-id="terrain"
                                 style="width: 290px; height: 200px"
                             >
                                 <GmapMarker
-                                :position="{lat:parseFloat(getUser.lat), lng:parseFloat(getUser.lng)}"
+                                :position="{lat:parseFloat(messageToFriends.lat), lng:parseFloat(messageToFriends.lng)}"
                                 :clickable="true"
                                 :draggable="true"
                                 @click="center=m.position"
@@ -52,7 +52,6 @@
 import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'SideProfile',
-  props: ['socket'],
   //   data () {
   //     return {
   //       lat: 0,
@@ -60,7 +59,14 @@ export default {
   //     }
   //   },
   methods: {
-    ...mapActions(['getAll']),
+    ...mapActions(['messageFriends']),
+    friends () {
+      const id = this.$route.params.id
+      const payload = {
+        id: id
+      }
+      this.messageFriends(payload)
+    },
     handleClick () {
       document.getElementById('profileMenu').style.width = '349px'
     },
@@ -70,10 +76,10 @@ export default {
     }
   },
   mounted () {
-    this.getAll()
+    this.friends()
   },
   computed: {
-    ...mapGetters(['getUser'])
+    ...mapGetters(['messageToFriends'])
   }
 }
 </script>

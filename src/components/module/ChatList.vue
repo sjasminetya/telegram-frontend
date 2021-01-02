@@ -5,49 +5,85 @@
         <Menu/>
     </div>
     <div class="menu-search">
-        <input type="text" class="form-control" placeholder="Search User">
+        <input v-model="search" @keyup.enter="searchUser" type="text" class="form-control" placeholder="Search User">
         <img src="../../assets/plus.png" alt="icon plus">
     </div>
     <div class="menu-chat-list">
         <h1>All</h1>
-        <div class="form-chat" @click.prevent="goMessage(friend.id)" v-for="friend in friends" :key="friend.id">
-            <div class="img-profile">
-                <img :src="friend.photoProfile" alt="user photo">
+        <div v-if="!search">
+            <div class="form-chat" v-on:click="goMessage(data.id)" v-for="data in friends" :key="data.id">
+                <div class="img-profile">
+                    <img :src="data.photoProfile" alt="user photo">
+                </div>
+                <div class="name-message">
+                    <h6 class="username">{{data.name}}</h6>
+                    <p class="message">{{message}}</p>
+                </div>
+                <p class="time">15.12</p>
             </div>
-            <div class="name-message">
-                <h6 class="username">{{friend.name}}</h6>
-                <p class="message"></p>
+        </div>
+
+        <div v-if="search">
+            <div class="form-chat" v-on:click="goMessage(data.id)" v-for="data in searchName" :key="data.id">
+                <div class="img-profile">
+                    <img :src="data.photoProfile" alt="user photo">
+                </div>
+                <div class="name-message">
+                    <h6 class="username">{{data.name}}</h6>
+                    <p class="message">{{message}}</p>
+                </div>
+                <p class="time">15.12</p>
             </div>
-            <p class="time">15.12</p>
         </div>
     </div>
 </div>
 </template>
 
 <script>
+import axios from 'axios'
 import { mapActions, mapGetters } from 'vuex'
 import Menu from '../module/Menu'
 export default {
   name: 'ChatList',
+  props: ['socket'],
   components: {
     Menu
   },
-  props: ['socket'],
+  data () {
+    return {
+      searchName: '',
+      search: '',
+      message: ''
+    }
+  },
   methods: {
-    ...mapActions(['getFriends']),
+    ...mapActions(['getFriends', 'getAllUser']),
     goMessage (id) {
-    //   this.$router.push({ name: 'Message', query: { id: id } })
-      this.$router.push({
-        path: '/main/message',
-        query: {
-          id: id,
-          t: new Date().getTime()
-        }
-      })
+      this.$router.push(`/main/message/${id}`)
+    },
+    async searchUser () {
+      const searchName = await axios.get(`${process.env.VUE_APP_URL_BACKEND}/users?name=${this.search}`)
+      const resultSearch = searchName.data.result
+      this.searchName = resultSearch
+      console.log(searchName)
+    }
+  },
+  watch: {
+    search (newSearch, oldSearch) {
+      console.log('New search is', newSearch)
+      console.log('Old search is', oldSearch)
+      this.searchUser()
     }
   },
   mounted () {
     this.getFriends()
+    this.searchUser()
+
+    this.socket.on('notificationMessage', data => {
+      console.log('notif', data)
+      this.message = data.message
+      console.log(this.message)
+    })
   },
   computed: {
     ...mapGetters(['friends'])

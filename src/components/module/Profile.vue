@@ -8,7 +8,10 @@
         <div class="img-profile">
             <img :src="userLogin.photoProfile" alt="user photo">
         </div>
-        <span><i class="fas fa-camera-retro"></i></span>
+        <input type="file" ref="file" id="file" @change="onSelect">
+        <label for="file">
+          <span><i class="fas fa-camera-retro"></i></span>
+        </label>
         <h6 class="name">{{userLogin.name}}</h6>
         <p class="user-name">@{{userLogin.username}}</p>
     </div>
@@ -77,11 +80,11 @@ export default {
       lat: 0,
       lng: 0,
       photoProfile: '',
-      socket: io('http://localhost:2000')
+      socket: io(`${process.env.VUE_APP_SOCKET_URL}`)
     }
   },
   methods: {
-    ...mapActions(['getUserById', 'update']),
+    ...mapActions(['getUserById', 'update', 'updateImage']),
     editNumber () {
       if (this.editPhoneNumber === 0) {
         this.editPhoneNumber++
@@ -147,18 +150,23 @@ export default {
           this.getUserById()
         })
     },
-    // updateLocation () {
-    //   const payload = {
-    //     lat: this.lat,
-    //     lng: this.lng
-    //   }
-    //   console.log('isi dari payload location', payload)
-    //   this.update(payload)
-    //     .then(() => {
-    //       console.log('data location')
-    //       // this.getUserById()
-    //     })
-    // },
+    onSelect () {
+      const file = this.$refs.file.files[0]
+      this.photoProfile = file
+      const formData = new FormData()
+      formData.append('photoProfile', this.photoProfile)
+      this.updateImage(formData)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Succeed',
+            text: 'Success update',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.getUserById()
+        })
+    },
     handleBackSettings () {
       this.$router.push('/main/default')
     }
@@ -206,6 +214,10 @@ export default {
 
 .profile {
     text-align: center;
+}
+
+.profile input {
+  display: none;
 }
 
 .profile i {

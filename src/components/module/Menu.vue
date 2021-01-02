@@ -4,18 +4,29 @@
             <div id="myMenu" class="menu-content">
                 <router-link to="/profile"><img src="../../assets/settings.png" alt="icon settings"> Settings </router-link>
                 <router-link to="#"><img src="../../assets/contacts.png" alt="icon contacts"> Contacts </router-link>
+                <router-link to="">
+                  <a @click.prevent="handleLogout" class="logout"><i class="fas fa-sign-out-alt"></i>Logout</a>
+                </router-link>
             </div>
         </div>
 </template>
 
 <script>
+import io from 'socket.io-client'
+import { mapActions } from 'vuex'
+import Swal from 'sweetalert2'
 export default {
   name: 'Menu',
+  data () {
+    return {
+      idUser: '',
+      socket: io(`${process.env.VUE_APP_SOCKET_URL}`)
+    }
+  },
   methods: {
     handleClick () {
       document.getElementById('myMenu').classList.toggle('show')
     },
-
     handleMenu () {
       window.onclick = function (event) {
         if (!event.target.matches('.dropmenu')) {
@@ -28,6 +39,23 @@ export default {
           }
         }
       }
+    },
+    ...mapActions(['logout']),
+    handleLogout () {
+      const idUser = localStorage.getItem('id')
+      this.idUser = idUser
+      console.log('udah logout', idUser)
+      this.socket.emit('offline', { idUser })
+      this.logout()
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Succeed logout',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.$router.push('/auth/login')
+        })
     }
   }
 }
@@ -66,8 +94,21 @@ export default {
     color: #FFFFFF;
     display: block;
     text-decoration: none;
-    padding: 12px 25px;
+    padding: 12px 20px;
     margin-top: 15px;
+}
+
+.menu-content i {
+  display: inline-block;
+  padding-right: 0;
+  font-size: 25px;
+  position: absolute;
+  left: 20px;
+  top: 140px;
+}
+
+.menu-content .logout {
+  padding-left: 35px;
 }
 
 .show {

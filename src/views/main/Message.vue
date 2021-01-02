@@ -1,70 +1,46 @@
 <template>
+<div>
     <div class="menu-message">
         <div class="nav-profile">
             <div class="img-profile">
-                <img :src="getUser.photoProfile" alt="">
+                <img :src="messageToFriends.photoProfile" alt="">
             </div>
             <div class="info-profile">
-                <h6 class="username">{{getUser.name}}</h6>
-                <p class="status">Online</p>
+                <h6 class="username">{{messageToFriends.name}}</h6>
+                <p :class="messageToFriends.status == 'online' ? 'online' : 'offline'">{{messageToFriends.status}}</p>
             </div>
             <SideProfile/>
         </div>
 
-        <div class="message-content">
-            <div class="message" v-for="history in historyChat" :key="history.id">
-                <div class="receiver" v-if="history.senderId === getUser.id">
-                    <img :src="getUser.photoProfile" alt="receiver profile">
-                    <div class="the-message">
-                        <h6>{{history.message}}</h6>
-                    </div>
-                    <h6>{{history.time}}</h6>
-                </div>
+        <div class="message-content" id="message-content">
 
-                <div class="sender" v-else-if="history.senderId === userLogin.id">
-                    <h6>{{history.time}}</h6>
-                    <div class="the-message">
-                        <h6>{{history.message}}</h6>
-                    </div>
-                    <div class="img-profile">
-                        <img @click.prevent="clickProfile" :src="userLogin.photoProfile" alt="sender profile">
-                    </div>
-                </div>
-            </div>
-
-            <!-- message -->
             <div class="message" v-for="msg in messages" :key="msg.id">
-                <div class="receiver" v-if="msg.senderId === getUser.id">
-                    <img :src="getUser.photoProfile" alt="receiver profile">
+                <div :class = "msg.senderId === messageToFriends.id ? 'receiver' : 'sender'">
                     <div class="the-message">
                         <h6>{{msg.message}}</h6>
-                    </div>
-                    <h6>{{msg.time}}</h6>
-                </div>
-
-                <div class="sender" v-else-if="msg.senderId === userLogin.id">
-                    <h6>{{msg.time}}</h6>
-                    <div class="the-message">
-                        <h6>{{msg.message}}</h6>
+                        <h6>{{setDate(msg.time)}}</h6>
                     </div>
                     <div class="img-profile">
-                        <img @click.prevent="clickProfile" :src="userLogin.photoProfile" alt="sender profile">
+                        <img :src="msg.senderId === messageToFriends.id ? messageToFriends.photoProfile : userLogin.photoProfile" alt="profile">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <footer class="footer-message">
-            <input type="text" v-model="inputMessage" placeholder="Type your message..." class="form-control icon-send" @keyup.enter="handleClick">
-        </footer>
+        </div>
     </div>
+    <footer class="footer-message">
+        <input type="text" v-model="inputMessage" placeholder="Type your message..." class="form-control icon-send" @keyup.enter="handleClick">
+    </footer>
+</div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import SideProfile from '../../components/module/SideProfile'
+import moment from 'moment'
 export default {
   name: 'Message',
+  props: ['socket'],
   data () {
     return {
       name: '',
@@ -72,40 +48,76 @@ export default {
       receiverId: '',
       messages: [],
       inputMessage: '',
-      cekReceiver: '',
-      cekSender: '',
-      historyMessage: []
+      historyMessage: [],
+      idUser: ''
     }
   },
-  props: ['socket'],
   components: {
     SideProfile
   },
   methods: {
-    ...mapActions(['getUserById', 'getAll', 'getAllMessage', 'getAllHistory']),
+    ...mapActions(['getUserById', 'messageFriends', 'getAllHistory']),
+    friends () {
+      const id = this.$route.params.id
+      const payload = {
+        id: id
+      }
+      this.messageFriends(payload)
+    },
     clickProfile () {
       this.$router.push('/profile')
     },
     handleClick () {
-      this.socket.emit('receiverMessage', { message: this.inputMessage, senderId: this.userLogin.id, receiverId: this.getUser.id })
+      this.socket.emit('receiverMessage', { message: this.inputMessage, senderId: this.userLogin.id, receiverId: this.messageToFriends.id })
       this.inputMessage = ''
+    },
+    setDate (date) {
+      return moment(date).format('LT')
     }
   },
-  mounted () {
-    this.getUserById()
-    this.getAll()
-    this.getAllHistory()
+  async mounted () {
+    await this.friends()
+    this.friends()
+    this.messageFriends(this.$route.params.id)
+    await this.getUserById()
+
+    const idUser = localStorage.getItem('id')
+    this.idUser = idUser
+    console.log(idUser)
+    this.socket.emit('online', { idUser })
+
+    const historyChat = await this.getAllHistory()
+    const get = historyChat.data.result
+    this.messages.push(...get)
+    console.log(this.messages)
+
     const senderId = localStorage.getItem('id')
     this.senderId = senderId
     this.socket.emit('initialUser', { senderId })
-    this.socket.on('kirimkembali', async (data) => {
+    this.socket.on('kirimkembali', (data) => {
       console.log('data message dari backend', data)
-      await this.messages.push(data)
-      console.log(this.messages)
+      this.messages.push(data)
     })
+
+    this.socket.on('notificationMessage', data => {
+      console.log('notif', data)
+      this.$notify({
+        group: 'foo',
+        title: `New message from: ${data.receiverId}`,
+        text: `${data.message}`
+      })
+    })
+
+    const scrollMessage = document.querySelector('#message-content')
+    scrollMessage.addEventListener('scroll', e => {
+      if (scrollMessage.scrollTop + scrollMessage.clientHeight >= scrollMessage.scrollHeight) {
+        this.getAllHistory()
+      }
+    })
+    this.getAllHistory()
   },
   computed: {
-    ...mapGetters(['userLogin', 'getUser', 'historyChat'])
+    ...mapGetters(['userLogin', 'messageToFriends', 'historyChat'])
   }
 }
 </script>
@@ -145,6 +157,38 @@ export default {
     margin-left: 20px;
 }
 
+.online {
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: -0.165px;
+    color: #7E98DF;
+}
+
+.offline {
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: -0.165px;
+}
+
+.menu-message {
+    border: 1px solid blue;
+}
+
+.message-content {
+    overflow: auto;
+    border: 1px solid red;
+    height: 100vh;
+    position: relative;
+    overflow: auto; /* scrollbar */
+    -ms-overflow-style: none;  /* scrollbar */
+    scrollbar-width: none; /* scrollbar */
+    margin-bottom: 100px;
+}
+
+.message-content::-webkit-scrollbar {
+    display: none;
+}
+
 .message {
     display: flex;
     flex-direction: column;
@@ -156,7 +200,7 @@ export default {
     margin-top: 50px;
 }
 
-.message .receiver {
+.receiver {
     float: left;
 }
 
@@ -165,9 +209,10 @@ export default {
     height: 82px;
     object-fit: cover;
     border-radius: 100%;
+    float: left;
 }
 
-.message .sender {
+.sender {
     align-self: flex-end;
 }
 
@@ -213,28 +258,21 @@ export default {
     cursor: pointer;
 }
 
-footer {
+.footer-message {
     position:absolute;
     bottom:0;
     width:100%;
-    height:120px;
+    height:90px;
+    border: 1px solid red;
 
     background: #FFFFFF;
 
 }
 
-/* .footer-message {
-    width: 100%;
-    height: 90px;
-    background: #FFFFFF;
-    position: absolute;
-    bottom: 0;
-} */
-
 .footer-message input {
     background: #FAFAFA;
     border-radius: 15px;
-    margin-top: 30px;
+    margin-top: 15px;
     margin-left: 50px;
     width: 800px;
     height: 60px;

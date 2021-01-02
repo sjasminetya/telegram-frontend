@@ -14,10 +14,11 @@ export default new Vuex.Store({
     users: [],
     userLogin: [],
     friends: [],
-    messageSender: [],
-    messageReceiver: [],
+    messageFriends: [],
     message: [],
-    historyMessage: []
+    historyMessage: [],
+    password: '',
+    searchUser: []
   },
   plugins: [createPersistedState()],
   mutations: {
@@ -40,11 +41,8 @@ export default new Vuex.Store({
     SET_FRIENDS (state, payload) {
       state.friends = payload
     },
-    SET_MESSAGE_SENDER (state, payload) {
-      state.messageSender = payload
-    },
-    SET_MESSAGE_RECEIVER (state, payload) {
-      state.messageReceiver = payload
+    SET_MESSAGE_FRIENDS (state, payload) {
+      state.messageFriends = payload
     },
     SET_MESSAGE (state, payload) {
       state.message = payload
@@ -52,8 +50,22 @@ export default new Vuex.Store({
     SET_HISTORY_MESSAGE (state, payload) {
       state.historyMessage = payload
     },
+    SEARCH_USER (state, payload) {
+      state.searchUser = payload
+    },
     REMOVE_TOKEN (state) {
       state.token = null
+    },
+    REMOVE_ALL (state) {
+      state.message = null
+      state.messageFriends = null
+      state.historyMessage = null
+      state.friends = null
+      state.userLogin = null
+      state.users = null
+      state.id = null
+      state.password = ''
+      state.searchUser = null
     }
   },
   actions: {
@@ -69,6 +81,12 @@ export default new Vuex.Store({
             resolve(result)
           })
       })
+    },
+    logout (context) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('id')
+      context.commit('REMOVE_TOKEN')
+      context.commit('REMOVE_ALL')
     },
     register (context, payload) {
       return new Promise((resolve, reject) => {
@@ -96,6 +114,34 @@ export default new Vuex.Store({
           })
       })
     },
+    updateImage (context, formData) {
+      return new Promise((resolve, reject) => {
+        // console.log('ini errornya?')
+        axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/image/${localStorage.getItem('id')}`, formData)
+        // console.log('ini isi payload update', payload)
+          .then((res) => {
+            console.log('data update', res.data.result)
+            resolve(res)
+          })
+          .catch(err => {
+            console.log('ada error?', err.response)
+            reject(err)
+          })
+      })
+    },
+    getAllUser (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users?name=${payload.name}`)
+          .then(res => {
+            const result = res.data.result
+            context.commit('SEARCH_USER', result)
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      })
+    },
     getUserById (context, payload) {
       return new Promise((resolve, reject) => {
         axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/${localStorage.getItem('id')}`)
@@ -105,38 +151,24 @@ export default new Vuex.Store({
             context.commit('SET_PROFILE', result)
             resolve(res)
           })
-      })
-    },
-    getAll (context, payload) {
-      return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/${router.currentRoute.query.id}`)
-          .then(res => {
-            console.log('data friends', res.data.result[0])
-            const result = res.data.result[0]
-            context.commit('SET_USER', result)
-            resolve(res)
+          .catch(err => {
+            console.log('error di get user by id', err)
+            reject(err)
           })
       })
     },
     getAllHistory (context, payload) {
       return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/history/${localStorage.getItem('id')}/${router.currentRoute.query.id}`)
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/history/${localStorage.getItem('id')}/${router.currentRoute.params.id}`)
           .then(res => {
             const result = res.data.result
             console.log('all history', res.data.result)
             context.commit('SET_HISTORY_MESSAGE', result)
             resolve(res)
           })
-      })
-    },
-    getAllMessage (context, payload) {
-      return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message`)
-          .then(res => {
-            console.log('all message', res.data.result)
-            const result = res.data.result
-            context.commit('SET_MESSAGE', result)
-            resolve(res)
+          .catch(err => {
+            console.log('error di get history page message', err)
+            reject(err)
           })
       })
     },
@@ -149,27 +181,26 @@ export default new Vuex.Store({
             context.commit('SET_FRIENDS', result)
             resolve(res)
           })
-      })
-    },
-    senderMessage (context) {
-      return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/sender/${localStorage.getItem('id')}`)
-          .then(res => {
-            console.log('data message sender', res.data.result)
-            const result = res.data.result
-            context.commit('SET_MESSAGE_SENDER', result)
-            resolve(res)
+          .catch(err => {
+            console.log('error di get chat list', err)
+            reject(err)
           })
       })
     },
-    receiverMessage (context, payload) {
+    messageFriends (context, payload) {
+      // console.log('ngga kepanggil?')
       return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/sender/${router.currentRoute.query.id}`)
-          .then(res => {
-            console.log('data message receiver', res.data.result)
-            const result = res.data.result
-            context.commit('SET_MESSAGE_RECEIVER', result)
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/friends/message/${payload.id}`)
+        // console.log('halo')
+          .then((res) => {
+            const result = res.data.result[0]
+            console.log('ini di page message', result)
+            context.commit('SET_MESSAGE_FRIENDS', result)
             resolve(res)
+          })
+          .catch(err => {
+            console.log('ada error?', err)
+            reject(err)
           })
       })
     },
@@ -265,20 +296,14 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    getUser (state) {
-      return state.users
-    },
     userLogin (state) {
       return state.userLogin
     },
     friends (state) {
       return state.friends
     },
-    getMessageSender (state) {
-      return state.messageSender
-    },
-    getMessageReceiver (state) {
-      return state.messageReceiver
+    messageToFriends (state) {
+      return state.messageFriends
     },
     isLogin (state) {
       return state.token !== null

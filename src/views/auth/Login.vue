@@ -59,7 +59,7 @@ export default {
         password: this.password
       }
       this.login(payload)
-        .then(() => {
+        .then((res) => {
           Swal.fire({
             icon: 'success',
             title: 'Success Login',

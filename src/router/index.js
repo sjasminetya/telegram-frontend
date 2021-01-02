@@ -27,31 +27,6 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/main',
-    name: 'Main',
-    component: Main,
-    children: [
-      {
-        path: 'default',
-        name: 'Default',
-        component: Default,
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'message',
-        name: 'Message',
-        component: Message,
-        meta: { requiresAuth: true }
-      }
-    ]
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile,
-    meta: { requiresAuth: true }
-  },
-  {
     path: '/auth',
     name: 'Auth',
     component: Auth,
@@ -69,6 +44,31 @@ const routes = [
         meta: { requiresVisitor: true }
       }
     ]
+  },
+  {
+    path: '/main',
+    name: 'Main',
+    component: Main,
+    children: [
+      {
+        path: 'default',
+        name: 'Default',
+        component: Default,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'message/:id',
+        name: 'Message',
+        component: Message,
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    meta: { requiresAuth: true }
   }
 ]
 
