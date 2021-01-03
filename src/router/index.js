@@ -8,6 +8,7 @@ import Main from '../views/main/Main.vue'
 import Message from '../views/main/Message.vue'
 import Default from '../views/main/Default.vue'
 import Profile from '../views/profile/Profile.vue'
+import Room from '../views/main/Room.vue'
 import store from '../store/index'
 
 Vue.use(VueRouter)
@@ -60,6 +61,12 @@ const routes = [
         path: 'message/:id',
         name: 'Message',
         component: Message,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'room',
+        name: 'Room',
+        component: Room,
         meta: { requiresAuth: true }
       }
     ]

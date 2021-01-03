@@ -140,7 +140,6 @@ form .icon-password {
     background-image: url('../../assets/eye.png');
     background-repeat: no-repeat;
     background-position: right;
-    cursor: pointer;
 }
 
 form .toggle-password {
@@ -201,5 +200,167 @@ form .text-rergister {
 
 form .text-rergister a {
     color: #7E98DF;
+}
+
+@media (max-width: 600px) {
+    form input {
+        max-width: 250px;
+    }
+
+    form .forgot-password {
+        padding-left: 150px;
+    }
+
+    form .button-group button {
+        width: 250px;
+    }
+}
+
+@media (max-width: 470px) {
+    form input {
+        max-width: 350px;
+    }
+
+    form .forgot-password {
+        padding-left: 250px;
+    }
+
+    form .button-group button {
+        width: 350px;
+    }
+}
+
+@media (max-width: 470px) {
+    form input {
+        max-width: 320px;
+    }
+
+    form .forgot-password {
+        padding-left: 220px;
+    }
+
+    form .button-group button {
+        width: 320px;
+    }
+}
+
+@media (max-width: 411px) {
+    form input {
+        max-width: 300px;
+    }
+
+    form .forgot-password {
+        padding-left: 200px;
+    }
+
+    form .button-group button {
+        width: 300px;
+    }
+}
+
+@media (max-width: 382px) {
+    form input {
+        max-width: 300px;
+    }
+
+    form .forgot-password {
+        padding-left: 200px;
+    }
+
+    form .button-group button {
+        width: 300px;
+    }
+}
+
+@media (max-width: 374px) {
+    form input {
+        max-width: 310px;
+    }
+
+    form .forgot-password {
+        padding-left: 210px;
+    }
+
+    form .button-group button {
+        width: 310px;
+    }
+}
+
+@media (max-width: 372px) {
+    h1 {
+        padding-left: 50px;
+    }
+
+    form input {
+        max-width: 300px;
+    }
+
+    form .forgot-password {
+        padding-left: 200px;
+    }
+
+    form .button-group button {
+        width: 300px;
+    }
+}
+
+@media (max-width: 362px) {
+    h1 {
+        padding-left: 60px;
+    }
+
+    form .forgot-password {
+        padding-left: 190px;
+    }
+}
+
+@media (max-width: 352px) {
+    h1 {
+        padding-left: 70px;
+    }
+
+    form .forgot-password {
+        padding-left: 175px;
+    }
+}
+
+@media (max-width: 332px) {
+    h1 {
+        padding-left: 80px;
+    }
+
+    form .forgot-password {
+        padding-left: 168px;
+    }
+}
+
+@media (max-width: 330px) {
+    h1 {
+        padding-left: 90px;
+    }
+
+    form .forgot-password {
+        padding-left: 160px;
+    }
+}
+
+@media (max-width: 322px) {
+    h1 {
+        padding-left: 100px;
+    }
+
+    form .forgot-password {
+        padding-left: 150px;
+    }
+}
+
+@media (max-width: 306px) {
+    h1 {
+        padding-left: 110px;
+    }
+
+    form .forgot-password {
+        padding-left: 140px;
+    }
 }
 </style>

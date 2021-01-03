@@ -6,7 +6,8 @@
     </div>
     <div class="menu-search">
         <input v-model="search" @keyup.enter="searchUser" type="text" class="form-control" placeholder="Search User">
-        <img src="../../assets/plus.png" alt="icon plus">
+        <!-- <img src="../../assets/plus.png" alt="icon plus"> -->
+        <ChildMenu/>
     </div>
     <div class="menu-chat-list">
         <h1>All</h1>
@@ -35,19 +36,30 @@
                 <p class="time">15.12</p>
             </div>
         </div>
+
+        <div class="form-chat" v-on:click="goRoomMessage(data.nameRoom)" v-for="(data, index) in getGroup" :key="index">
+            <div class="img-profile">
+                <img :src="data.imgRoom" alt="user photo">
+            </div>
+            <div class="name-message">
+                <h6 class="username">{{data.nameRoom}}</h6>
+            </div>
+        </div>
     </div>
 </div>
 </template>
 
 <script>
 import axios from 'axios'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import Menu from '../module/Menu'
+import ChildMenu from '../module/CildMenu'
 export default {
   name: 'ChatList',
   props: ['socket'],
   components: {
-    Menu
+    Menu,
+    ChildMenu
   },
   data () {
     return {
@@ -57,9 +69,17 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getFriends', 'getAllUser']),
+    ...mapActions(['getFriends', 'getAllUser', 'getGroupById', 'getAllHistory', 'messageFriends']),
+    ...mapMutations(['REMOVE_HISTORY', 'SET_HISTORY_MESSAGE']),
     goMessage (id) {
       this.$router.push(`/main/message/${id}`)
+      this.REMOVE_HISTORY()
+      const idUser = this.$route.params.id
+      this.getAllHistory(idUser)
+      this.messageFriends(idUser)
+    },
+    goRoomMessage (nameRoom) {
+      this.$router.push({ name: 'Room', query: { nameRoom: nameRoom } })
     },
     async searchUser () {
       const searchName = await axios.get(`${process.env.VUE_APP_URL_BACKEND}/users?name=${this.search}`)
@@ -78,15 +98,10 @@ export default {
   mounted () {
     this.getFriends()
     this.searchUser()
-
-    this.socket.on('notificationMessage', data => {
-      console.log('notif', data)
-      this.message = data.message
-      console.log(this.message)
-    })
+    this.getGroupById()
   },
   computed: {
-    ...mapGetters(['friends'])
+    ...mapGetters(['friends', 'getGroup'])
   }
 }
 </script>

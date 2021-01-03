@@ -3,25 +3,38 @@
     <div class="menu-message">
         <div class="nav-profile">
             <div class="img-profile">
-                <img :src="messageToFriends.photoProfile" alt="">
+                <img :src="roomMessage.imgRoom" alt="">
             </div>
             <div class="info-profile">
-                <h6 class="username">{{messageToFriends.name}}</h6>
-                <p :class="messageToFriends.status == 'online' ? 'online' : 'offline'">{{messageToFriends.status}}</p>
+                <h6 class="username">{{roomMessage.nameRoom}}</h6>
+                <div class="who-join-room" v-for="join in nameJoinRoom" :key="join.id">
+                    <h6>{{join.name}}</h6>
+                </div>
             </div>
-            <SideProfile/>
+            <!-- <SideProfile/> -->
         </div>
 
         <div class="message-content" id="message-content">
 
             <div class="message" v-for="msg in messages" :key="msg.id">
-                <div :class = "msg.senderId === messageToFriends.id ? 'receiver' : 'sender'">
+                <div v-if="msg.senderId !== userLogin.id" class = "receiver">
+                    <div class="img-profile">
+                        <img :src="msg.photoProfile" alt="profile">
+                    </div>
                     <div class="the-message">
                         <h6>{{msg.message}}</h6>
                         <h6>{{setDate(msg.time)}}</h6>
+                        <h6>{{msg.sendername}}</h6>
+                    </div>
+                </div>
+                <div v-else-if="msg.senderId === userLogin.id" class = "sender">
+                    <div class="the-message">
+                        <h6>{{msg.message}}</h6>
+                        <h6>{{setDate(msg.time)}}</h6>
+                        <h6>{{msg.sendername}}</h6>
                     </div>
                     <div class="img-profile">
-                        <img :src="msg.senderId === messageToFriends.id ? messageToFriends.photoProfile : userLogin.photoProfile" alt="profile">
+                        <img :src="msg.photoProfile" alt="profile">
                     </div>
                 </div>
             </div>
@@ -29,107 +42,82 @@
         </div>
     </div>
     <footer class="footer-message">
-        <input type="text" v-model="inputMessage" placeholder="Type your message..." class="form-control icon-send" @keyup.enter="handleClick">
+        <input type="text" v-model="inputMessage" placeholder="Type your message..." class="form-control icon-send" @keyup.enter="sendMessage">
     </footer>
 </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import SideProfile from '../../components/module/SideProfile'
 import moment from 'moment'
 export default {
-  name: 'Message',
+  name: 'Room',
   props: ['socket'],
   data () {
     return {
-      name: '',
-      senderId: '',
-      receiverId: '',
-      messages: [],
       inputMessage: '',
-      historyMessage: [],
-      idUser: ''
+      messages: [],
+      nameRoom: '',
+      senderName: ''
     }
   },
-  components: {
-    SideProfile
-  },
   methods: {
-    ...mapActions(['getUserById', 'messageFriends', 'getAllHistory']),
-    friends () {
-      const id = this.$route.params.id
-      const payload = {
-        id: id
-      }
-      this.messageFriends(payload)
-    },
-    clickProfile () {
-      this.$router.push('/profile')
-    },
-    handleClick () {
-      this.socket.emit('receiverMessage', { message: this.inputMessage, senderId: this.userLogin.id, receiverId: this.messageToFriends.id })
+    ...mapActions(['messageRoom', 'getUserById', 'historyChatGroup', 'whoJoinRoom']),
+    sendMessage () {
+      this.socket.emit('send-message', { nameRoom: this.nameRoom, message: this.inputMessage, senderId: localStorage.getItem('id'), senderName: this.senderName })
       this.inputMessage = ''
     },
     setDate (date) {
       return moment(date).format('LT')
+    },
+    whoJoin () {
+      const nameRoom = this.$route.query.nameRoom
+      const payload = {
+        nameRoom
+      }
+      this.whoJoinRoom(payload)
     }
   },
   async mounted () {
-    await this.friends()
+    this.messageRoom()
+    this.getUserById()
+    this.whoJoin()
 
-    // get history message
-    const id = this.$route.params.id
-    const historyChat = await this.getAllHistory(id)
-    console.log('history chat', historyChat)
+    const historyChat = await this.historyChatGroup()
     const get = historyChat.data.result
-    console.log('isi get', get)
     this.messages.push(...get)
+    console.log('get history', this.messages)
 
-    // listen message from backend
-    this.socket.on('kirimkembali', (data) => {
+    const nameRoom = this.roomMessage.nameRoom
+    const senderName = this.roomMessage.name
+    this.nameRoom = nameRoom
+    this.senderName = senderName
+    this.socket.emit('inital-user-join-group', { nameRoom, senderName })
+    this.socket.on('send-to-client', data => {
       console.log('from backend after insert message', data)
       this.messages.push(data)
       console.log('after push', this.messages)
     })
 
-    this.socket.on('notificationMessage', data => {
-      console.log('notif', data)
-      this.$notify({
-        group: 'foo',
-        title: `New message from: ${this.messageToFriends.name}`,
-        text: `${data.message}`
-      })
-    })
-
-    this.getUserById()
-
-    // user online
-    const idUser = localStorage.getItem('id')
-    this.idUser = idUser
-    this.socket.emit('online', { idUser })
-
-    // user login
-    const senderId = localStorage.getItem('id')
-    this.senderId = senderId
-    this.socket.emit('initialUser', { senderId })
-
-    // scroll
     const scrollMessage = document.querySelector('#message-content')
     scrollMessage.addEventListener('scroll', e => {
       if (scrollMessage.scrollTop + scrollMessage.clientHeight >= scrollMessage.scrollHeight) {
-        this.getAllHistory()
+        this.historyChatGroup()
       }
     })
-    this.getAllHistory()
+    this.historyChatGroup()
   },
   computed: {
-    ...mapGetters(['userLogin', 'messageToFriends', 'historyChat'])
+    ...mapGetters(['roomMessage', 'userLogin', 'nameJoinRoom'])
   }
 }
 </script>
 
 <style scoped>
+.who-join-room {
+    float: left;
+}
+
 .nav-profile {
     display: flex;
     background: #FFFFFF;
@@ -164,26 +152,13 @@ export default {
     margin-left: 20px;
 }
 
-.online {
-    font-size: 15px;
-    line-height: 18px;
-    letter-spacing: -0.165px;
-    color: #7E98DF;
-}
-
-.offline {
-    font-size: 15px;
-    line-height: 18px;
-    letter-spacing: -0.165px;
-}
-
-/* .menu-message {
+.menu-message {
     border: 1px solid blue;
-} */
+}
 
 .message-content {
     overflow: auto;
-    /* border: 1px solid red; */
+    border: 1px solid red;
     height: 100vh;
     position: relative;
     overflow: auto; /* scrollbar */
@@ -270,7 +245,7 @@ export default {
     bottom:0;
     width:100%;
     height:90px;
-    /* border: 1px solid red; */
+    border: 1px solid red;
 
     background: #FFFFFF;
 

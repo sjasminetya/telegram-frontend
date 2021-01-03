@@ -212,4 +212,114 @@ form .text-rergister {
 form .text-rergister a {
     color: #7E98DF;
 }
+
+@media (max-width: 600px) {
+    form input {
+        max-width: 250px;
+    }
+
+    form .button-group button {
+        width: 250px;
+    }
+}
+
+@media (max-width: 470px) {
+    form input {
+        max-width: 350px;
+    }
+
+    form .button-group button {
+        width: 350px;
+    }
+}
+
+@media (max-width: 470px) {
+    form input {
+        max-width: 320px;
+    }
+
+    form .button-group button {
+        width: 320px;
+    }
+}
+
+@media (max-width: 411px) {
+    form input {
+        max-width: 300px;
+    }
+
+    form .button-group button {
+        width: 300px;
+    }
+}
+
+@media (max-width: 382px) {
+    form input {
+        max-width: 300px;
+    }
+
+    form .button-group button {
+        width: 300px;
+    }
+}
+
+@media (max-width: 374px) {
+    form input {
+        max-width: 310px;
+    }
+
+    form .button-group button {
+        width: 310px;
+    }
+}
+
+@media (max-width: 372px) {
+    h1 {
+        padding-left: 50px;
+    }
+
+    form input {
+        max-width: 300px;
+    }
+
+    form .button-group button {
+        width: 300px;
+    }
+}
+
+@media (max-width: 362px) {
+    h1 {
+        padding-left: 60px;
+    }
+}
+
+@media (max-width: 352px) {
+    h1 {
+        padding-left: 70px;
+    }
+}
+
+@media (max-width: 332px) {
+    h1 {
+        padding-left: 80px;
+    }
+}
+
+@media (max-width: 330px) {
+    h1 {
+        padding-left: 90px;
+    }
+}
+
+@media (max-width: 322px) {
+    h1 {
+        padding-left: 100px;
+    }
+}
+
+@media (max-width: 306px) {
+    h1 {
+        padding-left: 110px;
+    }
+}
 </style>

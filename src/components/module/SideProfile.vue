@@ -5,7 +5,7 @@
             <div id="profileMenu" class="menu-content">
                 <div class="menu-top">
                     <img src="../../assets/back.png" @click.prevent="handleClose" alt="arrow back">
-                    <h6 class="username">@{{messageToFriends.username}}</h6>
+                    <h6 class="username">{{messageToFriends.username}}</h6>
                 </div>
                 <div class="profile">
                     <div class="img-profile">

@@ -18,7 +18,11 @@ export default new Vuex.Store({
     message: [],
     historyMessage: [],
     password: '',
-    searchUser: []
+    searchUser: [],
+    room: [],
+    roomMessage: [],
+    historyRoom: [],
+    nameJoinRoom: []
   },
   plugins: [createPersistedState()],
   mutations: {
@@ -50,8 +54,23 @@ export default new Vuex.Store({
     SET_HISTORY_MESSAGE (state, payload) {
       state.historyMessage = payload
     },
+    REMOVE_HISTORY (state) {
+      state.historyMessage = []
+    },
     SEARCH_USER (state, payload) {
       state.searchUser = payload
+    },
+    SET_ROOM (state, payload) {
+      state.room = payload
+    },
+    SET_ROOM_MESSAGE (state, payload) {
+      state.roomMessage = payload
+    },
+    SET_HISTORY_ROOM (state, payload) {
+      state.historyRoom = payload
+    },
+    SET_NAME_JOIN_ROOM (state, payload) {
+      state.nameJoinRoom = payload
     },
     REMOVE_TOKEN (state) {
       state.token = null
@@ -66,6 +85,10 @@ export default new Vuex.Store({
       state.id = null
       state.password = ''
       state.searchUser = null
+      state.room = null
+      state.roomMessage = null
+      state.historyRoom = null
+      state.nameJoinRoom = null
     }
   },
   actions: {
@@ -159,7 +182,7 @@ export default new Vuex.Store({
     },
     getAllHistory (context, payload) {
       return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/history/${localStorage.getItem('id')}/${router.currentRoute.params.id}`)
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/history/${localStorage.getItem('id')}/${payload}`)
           .then(res => {
             const result = res.data.result
             console.log('all history', res.data.result)
@@ -200,6 +223,66 @@ export default new Vuex.Store({
           })
           .catch(err => {
             console.log('ada error?', err)
+            reject(err)
+          })
+      })
+    },
+    getGroupById (context) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/room/${localStorage.getItem('id')}`)
+          .then(res => {
+            console.log('data group untuk chat list', res.data.result)
+            const result = res.data.result
+            context.commit('SET_ROOM', result)
+            resolve(res)
+          })
+          .catch(err => {
+            console.log('error di get room by id', err)
+            reject(err)
+          })
+      })
+    },
+    messageRoom (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/room/message/${localStorage.getItem('id')}`)
+          .then(res => {
+            console.log('data group untuk message room', res.data.result[0])
+            const result = res.data.result[0]
+            context.commit('SET_ROOM_MESSAGE', result)
+            resolve(res)
+          })
+          .catch(err => {
+            console.log('error di get room by id', err)
+            reject(err)
+          })
+      })
+    },
+    historyChatGroup (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/chat-room/history`)
+          .then(res => {
+            const result = res.data.result
+            console.log('all history chat group', res.data.result)
+            context.commit('SET_HISTORY_ROOM', result)
+            resolve(res)
+          })
+          .catch(err => {
+            console.log('error di get history page message room', err)
+            reject(err)
+          })
+      })
+    },
+    whoJoinRoom (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/chat-room?nameRoom=${payload.nameRoom}`)
+          .then(res => {
+            const result = res.data.result
+            console.log('name join room', res.data.result)
+            context.commit('SET_NAME_JOIN_ROOM', result)
+            resolve(res)
+          })
+          .catch(err => {
+            console.log('error di get name join room', err)
             reject(err)
           })
       })
@@ -310,6 +393,15 @@ export default new Vuex.Store({
     },
     historyChat (state) {
       return state.historyMessage
+    },
+    getGroup (state) {
+      return state.room
+    },
+    roomMessage (state) {
+      return state.roomMessage
+    },
+    nameJoinRoom (state) {
+      return state.nameJoinRoom
     }
   },
   modules: {

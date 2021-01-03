@@ -30,4 +30,20 @@ main .form-box {
     width: 500px;
     height: 710px;
 }
+
+@media (max-width: 600px) {
+    main .form-box {
+        width: 350px;
+    }
+}
+
+@media (max-width: 470px) {
+    main .form-box {
+        width: 100%;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
 </style>
