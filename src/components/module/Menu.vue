@@ -2,11 +2,9 @@
         <div class="menu">
             <img src="../../assets/menu.png" @click.prevent="handleClick" class="dropmenu" alt="icon menu">
             <div id="myMenu" class="menu-content">
-                <router-link to="/profile"><img src="../../assets/settings.png" alt="icon settings"> Settings </router-link>
-                <router-link to="#"><img src="../../assets/contacts.png" alt="icon contacts"> Contacts </router-link>
-                <router-link to="">
-                  <a @click.prevent="handleLogout" class="logout"><i class="fas fa-sign-out-alt"></i>Logout</a>
-                </router-link>
+                <router-link to="/profile"><i class="fas fa-cog"></i> Settings </router-link>
+                <router-link to="#"><i class="far fa-address-book"></i> Contacts </router-link>
+                <div @click.prevent="handleLogout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout </div>
             </div>
         </div>
 </template>
@@ -87,28 +85,27 @@ export default {
     margin-top: 10px;
 }
 
-.menu-content a {
+.menu-content a,
+.menu-content .logout {
     font-size: 16px;
     line-height: 19px;
     letter-spacing: -0.165px;
     color: #FFFFFF;
     display: block;
     text-decoration: none;
-    padding: 12px 20px;
+    padding: 10px 25px;
     margin-top: 15px;
+    margin-bottom: 20px;
 }
 
 .menu-content i {
   display: inline-block;
   padding-right: 0;
   font-size: 25px;
-  position: absolute;
-  left: 20px;
-  top: 140px;
 }
 
 .menu-content .logout {
-  padding-left: 35px;
+  cursor: pointer;
 }
 
 .show {
