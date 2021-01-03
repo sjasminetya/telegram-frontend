@@ -14,8 +14,8 @@ export default new Vuex.Store({
     users: [],
     userLogin: [],
     friends: [],
-    messageFriends: [],
-    message: [],
+    messageFriends: null,
+    messages: [],
     historyMessage: [],
     password: '',
     searchUser: [],
@@ -49,7 +49,13 @@ export default new Vuex.Store({
       state.messageFriends = payload
     },
     SET_MESSAGE (state, payload) {
-      state.message = payload
+      state.messages = payload
+    },
+    SET_MESSAGE_PUSH (state, payload) {
+      state.messages.push(payload)
+    },
+    REMOVE_MESSAGE (state) {
+      state.messages = []
     },
     SET_HISTORY_MESSAGE (state, payload) {
       state.historyMessage = payload
@@ -213,7 +219,7 @@ export default new Vuex.Store({
     messageFriends (context, payload) {
       // console.log('ngga kepanggil?')
       return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/friends/message/${payload.id}`)
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/friends/message/${payload}`)
         // console.log('halo')
           .then((res) => {
             const result = res.data.result[0]
