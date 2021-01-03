@@ -14,7 +14,7 @@
 
         <div class="message-content" id="message-content">
 
-            <div class="message" v-for="msg in messages" :key="msg.id">
+            <div class="message" v-for="(msg, index) in this.$store.state.messages" :key="index">
                 <div :class = "msg.senderId === messageToFriends.id ? 'receiver' : 'sender'">
                     <div class="the-message">
                         <h6>{{msg.message}}</h6>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import SideProfile from '../../components/module/SideProfile'
 import moment from 'moment'
 export default {
@@ -46,7 +46,7 @@ export default {
       name: '',
       senderId: '',
       receiverId: '',
-      messages: [],
+      ...mapState(['messages']),
       inputMessage: '',
       historyMessage: [],
       idUser: ''
@@ -57,12 +57,10 @@ export default {
   },
   methods: {
     ...mapActions(['getUserById', 'messageFriends', 'getAllHistory']),
+    ...mapMutations(['SET_MESSAGE', 'REMOVE_MESSAGE', 'SET_MESSAGE_PUSH']),
     friends () {
       const id = this.$route.params.id
-      const payload = {
-        id: id
-      }
-      this.messageFriends(payload)
+      this.messageFriends(id)
     },
     clickProfile () {
       this.$router.push('/profile')
@@ -80,17 +78,29 @@ export default {
 
     // get history message
     const id = this.$route.params.id
+    console.log('isi id mounted', id)
     const historyChat = await this.getAllHistory(id)
     console.log('history chat', historyChat)
     const get = historyChat.data.result
     console.log('isi get', get)
-    this.messages.push(...get)
+    this.REMOVE_MESSAGE()
+    this.SET_MESSAGE(get)
+    // this.messages.push(...get)
+
+    // user login
+    const senderId = localStorage.getItem('id')
+    this.senderId = senderId
+    this.socket.emit('initialUser', { senderId })
+
+    // user online
+    const idUser = localStorage.getItem('id')
+    this.idUser = idUser
+    this.socket.emit('online', { idUser })
 
     // listen message from backend
     this.socket.on('kirimkembali', (data) => {
       console.log('from backend after insert message', data)
-      this.messages.push(data)
-      console.log('after push', this.messages)
+      this.SET_MESSAGE_PUSH(data)
     })
 
     this.socket.on('notificationMessage', data => {
@@ -104,24 +114,14 @@ export default {
 
     this.getUserById()
 
-    // user online
-    const idUser = localStorage.getItem('id')
-    this.idUser = idUser
-    this.socket.emit('online', { idUser })
-
-    // user login
-    const senderId = localStorage.getItem('id')
-    this.senderId = senderId
-    this.socket.emit('initialUser', { senderId })
-
     // scroll
     const scrollMessage = document.querySelector('#message-content')
     scrollMessage.addEventListener('scroll', e => {
       if (scrollMessage.scrollTop + scrollMessage.clientHeight >= scrollMessage.scrollHeight) {
-        this.getAllHistory()
+        this.getAllHistory(id)
       }
     })
-    this.getAllHistory()
+    this.getAllHistory(id)
   },
   computed: {
     ...mapGetters(['userLogin', 'messageToFriends', 'historyChat'])
