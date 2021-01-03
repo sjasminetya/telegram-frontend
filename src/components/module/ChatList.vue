@@ -37,12 +37,14 @@
             </div>
         </div>
 
-        <div class="form-chat" v-on:click="goRoomMessage(data.nameRoom)" v-for="(data, index) in getGroup" :key="index">
-            <div class="img-profile">
-                <img :src="data.imgRoom" alt="user photo">
-            </div>
-            <div class="name-message">
-                <h6 class="username">{{data.nameRoom}}</h6>
+        <div v-if="!search">
+            <div class="form-chat" v-on:click="goRoomMessage(data.nameRoom)" v-for="(data, index) in getGroup" :key="index">
+                <div class="img-profile">
+                    <img :src="data.imgRoom" alt="user photo">
+                </div>
+                <div class="name-message">
+                    <h6 class="username">{{data.nameRoom}}</h6>
+                </div>
             </div>
         </div>
     </div>
@@ -70,13 +72,17 @@ export default {
   },
   methods: {
     ...mapActions(['getFriends', 'getAllUser', 'getGroupById', 'getAllHistory', 'messageFriends']),
-    ...mapMutations(['REMOVE_HISTORY', 'SET_HISTORY_MESSAGE']),
-    goMessage (id) {
+    ...mapMutations(['REMOVE_HISTORY', 'SET_HISTORY_MESSAGE', 'SET_MESSAGE', 'REMOVE_MESSAGE']),
+    async goMessage (id) {
+      console.log('isi id', id)
       this.$router.push(`/main/message/${id}`)
-      this.REMOVE_HISTORY()
-      const idUser = this.$route.params.id
-      this.getAllHistory(idUser)
-      this.messageFriends(idUser)
+      this.REMOVE_MESSAGE()
+      this.messageFriends(id)
+      const historyChat = await this.getAllHistory(id)
+      console.log('isi history chat chatlist', historyChat)
+      const get = historyChat.data.result
+      console.log('isi get chat list', get)
+      this.SET_MESSAGE(get)
     },
     goRoomMessage (nameRoom) {
       this.$router.push({ name: 'Room', query: { nameRoom: nameRoom } })
