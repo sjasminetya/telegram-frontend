@@ -50,6 +50,7 @@ export default {
     object-fit: contain;
     margin-right: 10px;
     cursor: pointer;
+    margin-top: 15px;
 }
 
 .menu-content {
