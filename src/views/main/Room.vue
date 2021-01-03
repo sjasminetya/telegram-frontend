@@ -7,9 +7,9 @@
             </div>
             <div class="info-profile">
                 <h6 class="username">{{roomMessage.nameRoom}}</h6>
-                <div class="who-join-room" v-for="join in nameJoinRoom" :key="join.id">
+                <!-- <div class="who-join-room" v-for="join in nameJoinRoom" :key="join.id">
                     <h6>{{join.name}}</h6>
-                </div>
+                </div> -->
             </div>
             <!-- <SideProfile/> -->
         </div>
@@ -152,13 +152,13 @@ export default {
     margin-left: 20px;
 }
 
-.menu-message {
+/* .menu-message {
     border: 1px solid blue;
-}
+} */
 
 .message-content {
     overflow: auto;
-    border: 1px solid red;
+    /* border: 1px solid red; */
     height: 100vh;
     position: relative;
     overflow: auto; /* scrollbar */
@@ -245,7 +245,7 @@ export default {
     bottom:0;
     width:100%;
     height:90px;
-    border: 1px solid red;
+    /* border: 1px solid red; */
 
     background: #FFFFFF;
 
