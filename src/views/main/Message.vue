@@ -17,7 +17,9 @@
             <div class="message" v-for="(msg, index) in this.$store.state.messages" :key="index">
                 <div :class = "msg.senderId === messageToFriends.id ? 'receiver' : 'sender'">
                     <div class="the-message">
-                        <h6>{{msg.message}}</h6>
+                      <!-- <div> -->
+                        <p>{{msg.message}}</p>
+                      <!-- </div> -->
                         <h6>{{setDate(msg.time)}}</h6>
                     </div>
                     <div class="img-profile">
@@ -81,7 +83,6 @@ export default {
     console.log('isi id mounted', id)
     this.getAllHistory(id)
     this.REMOVE_MESSAGE()
-    // this.messages.push(...get)
 
     // user login
     const senderId = localStorage.getItem('id')
@@ -96,16 +97,25 @@ export default {
     // listen message from backend
     this.socket.on('kirimkembali', (data) => {
       console.log('from backend after insert message', data)
-      this.SET_MESSAGE_PUSH(data)
-      console.log(data.senderId)
-      console.log(this.userLogin.id)
-      if (data.senderId !== this.userLogin.id) {
-        console.log('notif')
-        this.$notify({
-          group: 'foo',
-          title: `New message from: ${this.messageToFriends.name}`,
-          text: `${data.message}`
-        })
+      if (data.receiverId === this.messageToFriends.id) {
+        this.SET_MESSAGE_PUSH(data)
+        if (data.senderId !== this.userLogin.id) {
+          console.log('notif')
+          this.$notify({
+            group: 'foo',
+            title: `New message from: ${this.messageToFriends.name}`,
+            text: `${data.message}`
+          })
+        }
+      } else {
+        if (data.senderId !== this.userLogin.id) {
+          console.log('notif')
+          this.$notify({
+            group: 'foo',
+            title: `New message from: ${this.messageToFriends.name}`,
+            text: `${data.message}`
+          })
+        }
       }
     })
 
@@ -174,13 +184,8 @@ export default {
     letter-spacing: -0.165px;
 }
 
-/* .menu-message {
-    border: 1px solid blue;
-} */
-
 .message-content {
     overflow: auto;
-    /* border: 1px solid red; */
     height: 100vh;
     position: relative;
     overflow: auto; /* scrollbar */
@@ -208,25 +213,22 @@ export default {
     float: left;
 }
 
+.message img {
+  margin-left: 20px;
+}
+
 .message .receiver img {
     width: 82px;
     height: 82px;
     object-fit: cover;
     border-radius: 100%;
     float: left;
+    margin-top: 20px;
+    margin-left: 20px;
 }
 
 .sender {
     align-self: flex-end;
-}
-
-.message img {
-    width: 64px;
-    height: 64px;
-    object-fit: contain;
-    border-radius: 20px;
-    margin-top: 20px;
-    margin-left: 80px;
 }
 
 .message .receiver .the-message {
@@ -234,11 +236,10 @@ export default {
     border-radius: 35px 35px 35px 10px;
     width: 241px;
     font-size: 15px;
-    line-height: 185.17%;
-    letter-spacing: -0.165px;
     color: #FFFFFF;
-    padding: 30px 10px 30px 30px;
+    padding: 30px 30px 30px 30px;
     margin-left: 20px;
+    box-shadow: 0 0px 20px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .message .sender .the-message {
@@ -246,20 +247,21 @@ export default {
     border-radius: 35px 10px 35px 35px;
     width: 241px;
     font-size: 15px;
-    line-height: 185.17%;
-    letter-spacing: -0.165px;
     color: #232323;
-    padding: 30px 10px 30px 30px;
-    margin-right: -50px;
+    padding: 30px 30px 30px 30px;
+    margin-right: 10px;
+    word-wrap: break-word;
+    box-shadow: 0 0px 20px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.22);
 }
 
-.message .sender .img-profile img {
+.message .sender img {
     width: 82px;
     height: 82px;
     object-fit: cover;
     margin-right: 60px;
     border-radius: 100%;
     cursor: pointer;
+    margin-top: 20px;
 }
 
 .footer-message {
@@ -267,10 +269,7 @@ export default {
     bottom:0;
     width:100%;
     height:90px;
-    /* border: 1px solid red; */
-
     background: #FFFFFF;
-
 }
 
 .footer-message input {
@@ -288,5 +287,295 @@ export default {
     background-repeat: no-repeat;
     background-position: right;
     background-position-x: 750px;
+}
+
+@media (max-width: 1276px) {
+  .footer-message input {
+    width: 750px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 680px;
+  }
+}
+
+@media (max-width: 1224px) {
+  .footer-message input {
+    width: 700px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 650px;
+  }
+}
+
+@media (max-width: 1145px) {
+  .footer-message input {
+    width: 650px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 600px;
+  }
+}
+
+@media (max-width: 1085px) {
+  .footer-message input {
+    width: 600px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 550px;
+  }
+}
+
+@media (max-width: 1029px) {
+  .nav-profile {
+    width: 100%;
+  }
+
+  .footer-message input {
+    width: 580px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 530px;
+  }
+}
+
+@media (max-width: 991px) {
+  .footer-message input {
+    width: 480px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 430px;
+  }
+}
+
+@media (max-width: 931px) {
+  .footer-message input {
+    width: 430px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 380px;
+  }
+}
+
+@media (max-width: 893px) {
+  .footer-message input {
+    width: 430px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 370px;
+  }
+}
+
+@media (max-width: 837px) {
+  .footer-message input {
+    width: 400px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 340px;
+  }
+}
+
+@media (max-width: 794px) {
+  .footer-message input {
+    width: 340px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 280px;
+  }
+}
+
+@media (max-width: 789px) {
+  .footer-message input {
+    width: 370px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 310px;
+  }
+}
+
+@media (max-width: 763px) {
+  .footer-message input {
+    width: 330px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 290px;
+  }
+}
+
+@media (max-width: 722px) {
+  .message .sender .the-message,
+  .message .receiver .the-message {
+    width: 200px;
+  }
+
+  .message .receiver .the-message {
+    margin-left: 45px;
+  }
+
+  .message .sender img {
+    margin-right: 10px !important;
+  }
+}
+
+@media (max-width: 687px) {
+  .message .sender .the-message {
+    margin-right: -20px;
+  }
+
+  .message .sender .img-profile img {
+    margin-left: 30px;
+  }
+}
+
+@media (max-width: 675px) {
+  .footer-message input {
+    width: 280px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 220px;
+  }
+}
+
+@media (max-width: 661px) {
+  .footer-message input {
+    width: 300px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 260px;
+  }
+}
+
+@media (max-width: 617px) {
+  .footer-message input {
+    width: 280px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 240px;
+  }
+}
+
+@media (max-width: 572px) {
+  .nav-profile .img-profile img {
+    margin-left: 25px;
+  }
+
+  .footer-message input {
+    width: 450px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 390px;
+  }
+}
+
+@media (max-width: 567px) {
+  .nav-profile .img-profile img {
+    margin-left: 25px;
+  }
+
+  .footer-message input {
+    width: 450px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 390px;
+  }
+}
+
+@media (max-width: 523px) {
+  .footer-message input {
+    width: 430px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 370px;
+  }
+}
+
+@media (max-width: 503px) {
+  .footer-message input {
+    width: 400px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 340px;
+  }
+}
+
+@media (max-width: 475px) {
+  .footer-message input {
+    width: 380px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 340px;
+  }
+}
+
+@media (max-width: 447px) {
+  .footer-message input {
+    width: 350px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 300px;
+  }
+}
+
+@media (max-width: 415px) {
+  .footer-message input {
+    width: 330px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 280px;
+  }
+}
+
+@media (max-width: 391px) {
+  .footer-message input {
+    width: 300px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 260px;
+  }
+}
+
+@media (max-width: 360px) {
+  .message .sender .the-message,
+  .message .receiver .the-message {
+    width: 200px;
+  }
+
+  .message .receiver .the-message {
+    margin-left: 45px;
+  }
+
+  .message .sender img {
+    margin-right: 10px !important;
+  }
+
+  .footer-message input {
+    width: 260px;
+  }
+
+  .footer-message .icon-send {
+    background-position-x: 210px;
+  }
 }
 </style>

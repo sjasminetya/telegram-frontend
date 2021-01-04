@@ -79,9 +79,7 @@ export default {
       this.REMOVE_MESSAGE()
       this.messageFriends(id)
       const historyChat = await this.getAllHistory(id)
-      console.log('isi history chat chatlist', historyChat)
       const get = historyChat.data.result
-      console.log('isi get chat list', get)
       this.SET_MESSAGE(get)
     },
     goRoomMessage (nameRoom) {
@@ -200,5 +198,181 @@ export default {
 
 .menu-chat-list .form-chat .time {
     padding-left: 10px;
+}
+
+@media (max-width: 1196px) {
+    .menu-search input {
+        width: 280px;
+    }
+}
+
+@media (max-width: 1083px) {
+    .menu-search input {
+        width: 250px;
+    }
+}
+
+@media (max-width: 1025px) {
+    .menu-search input {
+        width: 230px;
+    }
+}
+
+@media (max-width: 990px) {
+    .menu-search input {
+        width: 300px;
+    }
+}
+
+@media (max-width: 976px) {
+    .menu-search input {
+        width: 280px;
+    }
+}
+
+@media (max-width: 889px) {
+    .menu-search input {
+        width: 260px;
+    }
+}
+
+@media (max-width: 836px) {
+    .menu-search input {
+        width: 230px;
+    }
+}
+
+@media (max-width: 828px) {
+    .menu-search input {
+        width: 200px;
+    }
+}
+
+@media (max-width: 770px) {
+    .menu-search input {
+        width: 200px;
+    }
+}
+
+@media (max-width: 731px) {
+    .menu-search input {
+        width: 180px;
+    }
+}
+
+@media (max-width: 684px) {
+    .menu-search input {
+        width: 170px;
+    }
+}
+
+@media (max-width: 675px) {
+    .menu-chat-list .form-chat {
+        padding-left: 5px;
+    }
+}
+
+@media (max-width: 651px) {
+    .menu-search input {
+        width: 150px;
+    }
+}
+
+@media (max-width: 581px) {
+    .menu-search input {
+        width: 140px;
+    }
+
+    .menu-chat-list .form-chat {
+        padding-left: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .menu-search input {
+        width: 120px;
+    }
+
+    .menu-chat-list .form-chat {
+        padding-left: 10px;
+    }
+}
+
+@media (max-width: 572px) {
+    .menu-search input {
+        width: 450px;
+    }
+}
+
+@media (max-width: 543px) {
+    .menu-search input {
+        width: 430px;
+    }
+}
+
+@media (max-width: 519px) {
+    .menu-search input {
+        width: 410px;
+    }
+}
+
+@media (max-width: 495px) {
+    .menu-search input {
+        width: 390px;
+    }
+}
+
+@media (max-width: 476px) {
+    .menu-search input {
+        width: 370px;
+    }
+}
+
+@media (max-width: 457px) {
+    .menu-search input {
+        width: 350px;
+    }
+}
+
+@media (max-width: 436px) {
+    .menu-search input {
+        width: 330px;
+    }
+}
+
+@media (max-width: 417px) {
+    .menu-search input {
+        width: 310px;
+    }
+}
+
+@media (max-width: 396px) {
+    .menu-search input {
+        width: 290px;
+    }
+}
+
+@media (max-width: 372px) {
+    .menu-search input {
+        width: 270px;
+    }
+}
+
+@media (max-width: 356px) {
+    .menu-search input {
+        width: 250px;
+    }
+}
+
+@media (max-width: 328px) {
+    .menu-search input {
+        width: 230px;
+    }
+}
+
+@media (max-width: 319px) {
+    .menu-search input {
+        width: 210px;
+    }
 }
 </style>

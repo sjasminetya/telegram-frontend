@@ -1,10 +1,10 @@
 <template>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-4 col-md-4 chat-list">
+            <div class="col-lg-4 col-md-5 col-sm-5 col-12 chat-list">
                 <ChatList/>
             </div>
-            <div class="col-lg-8 col-md-8 message-main">
+            <div class="col-lg-8 col-md-7 col-sm-7 col-12 message-main">
                 <router-view :socket="socket"/>
             </div>
         </div>
