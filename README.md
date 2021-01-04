@@ -1,4 +1,4 @@
-# chatwebapp-frontend
+# Telegram Frontend
 
 ## Project setup
 ```
