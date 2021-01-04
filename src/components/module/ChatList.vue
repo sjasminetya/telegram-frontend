@@ -18,7 +18,7 @@
                 </div>
                 <div class="name-message">
                     <h6 class="username">{{data.name}}</h6>
-                    <p class="message">{{message}}</p>
+                    <p class="message"></p>
                 </div>
                 <p class="time">15.12</p>
             </div>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="name-message">
                     <h6 class="username">{{data.name}}</h6>
-                    <p class="message">{{message}}</p>
+                    <p class="message"></p>
                 </div>
                 <p class="time">15.12</p>
             </div>
@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     ...mapActions(['getFriends', 'getAllUser', 'getGroupById', 'getAllHistory', 'messageFriends']),
-    ...mapMutations(['REMOVE_HISTORY', 'SET_HISTORY_MESSAGE', 'SET_MESSAGE', 'REMOVE_MESSAGE']),
+    ...mapMutations(['REMOVE_HISTORY', 'SET_MESSAGE', 'REMOVE_MESSAGE']),
     async goMessage (id) {
       console.log('isi id', id)
       this.$router.push(`/main/message/${id}`)

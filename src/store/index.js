@@ -53,12 +53,10 @@ export default new Vuex.Store({
     },
     SET_MESSAGE_PUSH (state, payload) {
       state.messages.push(payload)
+      console.log('message push')
     },
     REMOVE_MESSAGE (state) {
       state.messages = []
-    },
-    SET_HISTORY_MESSAGE (state, payload) {
-      state.historyMessage = payload
     },
     REMOVE_HISTORY (state) {
       state.historyMessage = []
@@ -192,7 +190,7 @@ export default new Vuex.Store({
           .then(res => {
             const result = res.data.result
             console.log('all history', res.data.result)
-            context.commit('SET_HISTORY_MESSAGE', result)
+            context.commit('SET_MESSAGE', result)
             resolve(res)
           })
           .catch(err => {

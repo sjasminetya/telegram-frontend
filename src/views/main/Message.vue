@@ -79,12 +79,8 @@ export default {
     // get history message
     const id = this.$route.params.id
     console.log('isi id mounted', id)
-    const historyChat = await this.getAllHistory(id)
-    console.log('history chat', historyChat)
-    const get = historyChat.data.result
-    console.log('isi get', get)
+    this.getAllHistory(id)
     this.REMOVE_MESSAGE()
-    this.SET_MESSAGE(get)
     // this.messages.push(...get)
 
     // user login
@@ -101,15 +97,16 @@ export default {
     this.socket.on('kirimkembali', (data) => {
       console.log('from backend after insert message', data)
       this.SET_MESSAGE_PUSH(data)
-    })
-
-    this.socket.on('notificationMessage', data => {
-      console.log('notif', data)
-      this.$notify({
-        group: 'foo',
-        title: `New message from: ${this.messageToFriends.name}`,
-        text: `${data.message}`
-      })
+      console.log(data.senderId)
+      console.log(this.userLogin.id)
+      if (data.senderId !== this.userLogin.id) {
+        console.log('notif')
+        this.$notify({
+          group: 'foo',
+          title: `New message from: ${this.messageToFriends.name}`,
+          text: `${data.message}`
+        })
+      }
     })
 
     this.getUserById()
