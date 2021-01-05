@@ -25,8 +25,8 @@
                 <div class="invalid-feedback" v-if="!$v.password.minLength">Field must have at least {{ $v.password.$params.minLength.min }} characters.</div>
             </div>
             <div class="form-group button-group">
-                <button type="submit" class="btn btn-register" @click.prevent="goRegister">Register</button>
-                <button type="submit" class="btn btn-google"><img src="../../assets/logo-google.png" class="icon-google">Google</button>
+                <Button type="submit" className="btn-register" @onClick="goRegister" name="Register"/>
+                <Button type="submit" className="btn-google" name="Google"/>
             </div>
         </form>
     </div>
@@ -35,6 +35,7 @@
 <script>
 import { required, minLength, email } from 'vuelidate/lib/validators'
 import { mapMutations, mapActions } from 'vuex'
+import Button from '../../components/base/Button'
 export default {
   name: 'Register',
   data () {
@@ -43,6 +44,9 @@ export default {
       email: '',
       password: ''
     }
+  },
+  components: {
+    Button
   },
   validations: {
     email: { required, email },
@@ -173,34 +177,6 @@ form .button-group {
     flex-direction: column;
 }
 
-form .button-group button {
-    border-radius: 70px;
-    width: 360px;
-    height: 60px;
-    margin-top: 50px;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 19px;
-    text-align: center;
-}
-
-form .button-group .btn-register {
-    background: #7E98DF;
-    color: #FFFFFF;
-}
-
-form .button-group .btn-google {
-    background: #FFFFFF;
-    border: 1px solid #7E98DF;
-    box-sizing: border-box;
-    color: #7E98DF;
-}
-
-form .button-group .icon-google {
-    background-repeat: no-repeat;
-    padding-right: 15px;
-}
-
 form .text-rergister {
     font-size: 14px;
     line-height: 17px;
@@ -217,19 +193,11 @@ form .text-rergister a {
     form input {
         max-width: 250px;
     }
-
-    form .button-group button {
-        width: 250px;
-    }
 }
 
 @media (max-width: 470px) {
     form input {
         max-width: 350px;
-    }
-
-    form .button-group button {
-        width: 350px;
     }
 }
 
@@ -237,19 +205,11 @@ form .text-rergister a {
     form input {
         max-width: 320px;
     }
-
-    form .button-group button {
-        width: 320px;
-    }
 }
 
 @media (max-width: 411px) {
     form input {
         max-width: 300px;
-    }
-
-    form .button-group button {
-        width: 300px;
     }
 }
 
@@ -257,19 +217,11 @@ form .text-rergister a {
     form input {
         max-width: 300px;
     }
-
-    form .button-group button {
-        width: 300px;
-    }
 }
 
 @media (max-width: 374px) {
     form input {
         max-width: 310px;
-    }
-
-    form .button-group button {
-        width: 310px;
     }
 }
 
@@ -280,10 +232,6 @@ form .text-rergister a {
 
     form input {
         max-width: 300px;
-    }
-
-    form .button-group button {
-        width: 300px;
     }
 }
 

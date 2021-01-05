@@ -5,8 +5,30 @@
 </template>
 
 <script>
+import io from 'socket.io-client'
 export default {
-  name: 'Default'
+  name: 'Default',
+  data () {
+    return {
+      lat: 0,
+      lng: 0,
+      idUser: '',
+      socket: io(`${process.env.VUE_APP_SOCKET_URL}`)
+    }
+  },
+  mounted () {
+    this.$getLocation()
+      .then(coordinates => {
+        this.lat = coordinates.lat
+        this.lng = coordinates.lng
+        this.socket.emit('newLocation', { lat: this.lat, lng: this.lng, id: this.idUser })
+      })
+
+    // user online
+    const idUser = localStorage.getItem('id')
+    this.idUser = idUser
+    this.socket.emit('online', { idUser })
+  }
 }
 </script>
 

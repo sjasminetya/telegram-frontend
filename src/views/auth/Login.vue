@@ -20,8 +20,8 @@
                 <router-link to="#" class="forgot-password">Forgot Password?</router-link>
             </div>
             <div class="form-group button-group">
-                <button type="submit" @click.prevent="goLogin" class="btn btn-login">Login</button>
-                <button type="submit" class="btn btn-google"><img src="../../assets/logo-google.png" class="icon-google">Google</button>
+                <Button type="submit" className="btn-login" @onClick="goLogin" name="Login"/>
+                <Button type="submit" className="btn-google" name="Google"/>
             </div>
             <div class="form-group">
                 <p class="text-rergister">Dont't have an account? <router-link to="/auth/register">Sign Up</router-link></p>
@@ -34,6 +34,7 @@
 import { mapActions, mapMutations } from 'vuex'
 import Swal from 'sweetalert2'
 import { required, minLength, email } from 'vuelidate/lib/validators'
+import Button from '../../components/base/Button'
 export default {
   name: 'Login',
   data () {
@@ -41,6 +42,9 @@ export default {
       email: '',
       password: ''
     }
+  },
+  components: {
+    Button
   },
   validations: {
     email: { required, email },
@@ -50,7 +54,7 @@ export default {
     validationStatus (validation) {
       return typeof validation !== 'undefined' ? validation.$error : false
     },
-    ...mapActions(['login']),
+    ...mapActions(['login', 'update']),
     goLogin () {
       this.$v.$touch()
       if (this.$v.$pendding || this.$v.$error) return
@@ -162,34 +166,6 @@ form .button-group {
     flex-direction: column;
 }
 
-form .button-group button {
-    border-radius: 70px;
-    width: 360px;
-    height: 60px;
-    margin-top: 50px;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 19px;
-    text-align: center;
-}
-
-form .button-group .btn-login {
-    background: #7E98DF;
-    color: #FFFFFF;
-}
-
-form .button-group .btn-google {
-    background: #FFFFFF;
-    border: 1px solid #7E98DF;
-    box-sizing: border-box;
-    color: #7E98DF;
-}
-
-form .button-group .icon-google {
-    background-repeat: no-repeat;
-    padding-right: 15px;
-}
-
 form .text-rergister {
     font-size: 14px;
     line-height: 17px;
@@ -210,10 +186,6 @@ form .text-rergister a {
     form .forgot-password {
         padding-left: 150px;
     }
-
-    form .button-group button {
-        width: 250px;
-    }
 }
 
 @media (max-width: 470px) {
@@ -223,10 +195,6 @@ form .text-rergister a {
 
     form .forgot-password {
         padding-left: 250px;
-    }
-
-    form .button-group button {
-        width: 350px;
     }
 }
 
@@ -238,10 +206,6 @@ form .text-rergister a {
     form .forgot-password {
         padding-left: 220px;
     }
-
-    form .button-group button {
-        width: 320px;
-    }
 }
 
 @media (max-width: 411px) {
@@ -251,10 +215,6 @@ form .text-rergister a {
 
     form .forgot-password {
         padding-left: 200px;
-    }
-
-    form .button-group button {
-        width: 300px;
     }
 }
 
@@ -266,10 +226,6 @@ form .text-rergister a {
     form .forgot-password {
         padding-left: 200px;
     }
-
-    form .button-group button {
-        width: 300px;
-    }
 }
 
 @media (max-width: 374px) {
@@ -279,10 +235,6 @@ form .text-rergister a {
 
     form .forgot-password {
         padding-left: 210px;
-    }
-
-    form .button-group button {
-        width: 310px;
     }
 }
 
@@ -297,10 +249,6 @@ form .text-rergister a {
 
     form .forgot-password {
         padding-left: 200px;
-    }
-
-    form .button-group button {
-        width: 300px;
     }
 }
 

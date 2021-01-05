@@ -6,7 +6,6 @@
     </div>
     <div class="menu-search">
         <input v-model="search" @keyup.enter="searchUser" type="text" class="form-control" placeholder="Search User">
-        <!-- <img src="../../assets/plus.png" alt="icon plus"> -->
         <ChildMenu/>
     </div>
     <div class="menu-chat-list">
@@ -34,17 +33,6 @@
                     <p class="message"></p>
                 </div>
                 <p class="time">15.12</p>
-            </div>
-        </div>
-
-        <div v-if="!search">
-            <div class="form-chat" v-on:click="goRoomMessage(data.nameRoom)" v-for="(data, index) in getGroup" :key="index">
-                <div class="img-profile">
-                    <img :src="data.imgRoom" alt="user photo">
-                </div>
-                <div class="name-message">
-                    <h6 class="username">{{data.nameRoom}}</h6>
-                </div>
             </div>
         </div>
     </div>
@@ -102,10 +90,9 @@ export default {
   mounted () {
     this.getFriends()
     this.searchUser()
-    this.getGroupById()
   },
   computed: {
-    ...mapGetters(['friends', 'getGroup'])
+    ...mapGetters(['friends'])
   }
 }
 </script>

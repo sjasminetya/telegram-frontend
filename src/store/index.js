@@ -53,7 +53,7 @@ export default new Vuex.Store({
     },
     SET_MESSAGE_PUSH (state, payload) {
       state.messages.push(payload)
-      console.log('message push')
+      // console.log('message push di store')
     },
     REMOVE_MESSAGE (state) {
       state.messages = []
@@ -80,7 +80,7 @@ export default new Vuex.Store({
       state.token = null
     },
     REMOVE_ALL (state) {
-      state.message = null
+      state.messages = null
       state.messageFriends = null
       state.historyMessage = null
       state.friends = null
@@ -373,6 +373,22 @@ export default new Vuex.Store({
             Swal.fire({
               icon: 'error',
               title: 'Email not found',
+              showConfirmButton: false,
+              timer: 2000
+            })
+          }
+        } else if (error.response.data.error.status === 500) {
+          if (error.response.data.error.message === 'type file not supported') {
+            Swal.fire({
+              icon: 'error',
+              title: 'type file not supported',
+              showConfirmButton: false,
+              timer: 2000
+            })
+          } else if (error.response.data.error.message === 'File too large') {
+            Swal.fire({
+              icon: 'error',
+              title: 'File too large',
               showConfirmButton: false,
               timer: 2000
             })

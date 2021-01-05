@@ -52,12 +52,6 @@
 import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'SideProfile',
-  //   data () {
-  //     return {
-  //       lat: 0,
-  //       lng: 0
-  //     }
-  //   },
   methods: {
     ...mapActions(['messageFriends']),
     friends () {
@@ -89,11 +83,6 @@ export default {
     display: block;
 }
 
-/* .menu {
-    position: relative;
-    display: inline-block;
-} */
-
 .menu-profile {
     position: relative;
     transition: 2s;
@@ -110,7 +99,6 @@ export default {
 }
 
 .menu-content {
-    /* width: 349px; */
     width: 0px;
     height: max-content;
     background: #FFFFFF;
@@ -118,11 +106,8 @@ export default {
     left: 300px;
     top: 0px;
     z-index: 1;
-    /* display: none; */
     overflow: auto;
-    /* overflow-x: hidden; */
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-    /* border-radius: 20px; */
 }
 
 .menu-top {

@@ -2,7 +2,7 @@
 <div>
     <div class="menu-top">
         <img src="../../assets/back.png" @click.prevent="handleBackSettings" alt="arrow back">
-        <h6 class="username">@{{userLogin.username}}</h6>
+        <h6 class="username">{{userLogin.username}}</h6>
     </div>
     <div class="profile">
         <div class="img-profile">
@@ -13,7 +13,7 @@
           <span><i class="fas fa-camera-retro"></i></span>
         </label>
         <h6 class="name">{{userLogin.name}}</h6>
-        <p class="user-name">@{{userLogin.username}}</p>
+        <p class="user-name">{{userLogin.username}}</p>
     </div>
     <div class="menu-info">
         <h3>Account</h3>
@@ -44,13 +44,13 @@
             <h3>Location</h3>
             <div class="map">
               <GmapMap
-                :center="{lat:lat, lng:lng}"
+                :center="{lat:parseFloat(userLogin.lat), lng:parseFloat(userLogin.lng)}"
                 :zoom="7"
                 map-type-id="terrain"
                 style="width: 360px; height: 200px"
               >
                 <GmapMarker
-                  :position="{lat:lat, lng:lng}"
+                  :position="{lat:parseFloat(userLogin.lat), lng:parseFloat(userLogin.lng)}"
                   :clickable="true"
                   :draggable="true"
                   @click="center=m.position"
@@ -64,7 +64,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import io from 'socket.io-client'
 import Swal from 'sweetalert2'
 export default {
   name: 'Profile',
@@ -77,10 +76,7 @@ export default {
       editImage: 0,
       username: '',
       bio: '',
-      lat: 0,
-      lng: 0,
-      photoProfile: '',
-      socket: io(`${process.env.VUE_APP_SOCKET_URL}`)
+      photoProfile: ''
     }
   },
   methods: {
@@ -175,13 +171,6 @@ export default {
     this.getUserById()
     // this.updateLocation()
     // this.update()
-    this.$getLocation()
-      .then(coordinates => {
-        this.lat = coordinates.lat
-        this.lng = coordinates.lng
-        console.log(coordinates)
-        this.socket.emit('newLocation', { lat: this.lat, lng: this.lng, id: this.userLogin.id })
-      })
   },
   computed: {
     ...mapGetters(['userLogin'])

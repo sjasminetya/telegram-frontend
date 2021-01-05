@@ -17,9 +17,7 @@
             <div class="message" v-for="(msg, index) in this.$store.state.messages" :key="index">
                 <div :class = "msg.senderId === messageToFriends.id ? 'receiver' : 'sender'">
                     <div class="the-message">
-                      <!-- <div> -->
                         <p>{{msg.message}}</p>
-                      <!-- </div> -->
                         <h6>{{setDate(msg.time)}}</h6>
                     </div>
                     <div class="img-profile">
@@ -51,7 +49,8 @@ export default {
       ...mapState(['messages']),
       inputMessage: '',
       historyMessage: [],
-      idUser: ''
+      lat: 0,
+      lng: 0
     }
   },
   components: {
@@ -89,18 +88,14 @@ export default {
     this.senderId = senderId
     this.socket.emit('initialUser', { senderId })
 
-    // user online
-    const idUser = localStorage.getItem('id')
-    this.idUser = idUser
-    this.socket.emit('online', { idUser })
-
     // listen message from backend
     this.socket.on('kirimkembali', (data) => {
-      console.log('from backend after insert message', data)
-      if (data.receiverId === this.messageToFriends.id) {
+      console.log('diambil dari data', data.receiverId)
+      console.log('current id receiver', this.messageToFriends.id)
+      if (data.receiverId === this.messageToFriends.id || data.senderId === this.messageToFriends.id) {
+        console.log('seperti biasa')
         this.SET_MESSAGE_PUSH(data)
         if (data.senderId !== this.userLogin.id) {
-          console.log('notif')
           this.$notify({
             group: 'foo',
             title: `New message from: ${this.messageToFriends.name}`,
@@ -108,11 +103,11 @@ export default {
           })
         }
       } else {
+        console.log('ada orang ke tiga')
         if (data.senderId !== this.userLogin.id) {
-          console.log('notif')
           this.$notify({
             group: 'foo',
-            title: `New message from: ${this.messageToFriends.name}`,
+            title: 'New message',
             text: `${data.message}`
           })
         }
