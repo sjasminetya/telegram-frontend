@@ -1,10 +1,10 @@
 <template>
     <div class="menu" id="menuId">
-        <img class="icon-profile" src="../../assets/profile-menu.png" @click.prevent="handleClick" alt="icon profile menu">
+        <img class="icon-profile" src="../../assets/profile-menu.png" alt="icon profile menu" @click="show">
         <div class="menu-profile">
-            <div id="profileMenu" class="menu-content">
+            <div id="menu-content">
                 <div class="menu-top">
-                    <img src="../../assets/back.png" @click.prevent="handleClose" alt="arrow back">
+                    <img src="../../assets/back.png" alt="arrow back" @click="show">
                     <h6 class="username">{{messageToFriends.username}}</h6>
                 </div>
                 <div class="profile">
@@ -14,7 +14,7 @@
                     <div class="profile-content">
                         <div class="info-profile">
                             <h6 class="name">{{messageToFriends.name}}</h6>
-                            <p class="status">Online</p>
+                            <p class="status">{{messageToFriends.status}}</p>
                         </div>
                         <img src="../../assets/chat.png" alt="icon chat">
                     </div>
@@ -61,12 +61,8 @@ export default {
       }
       this.messageFriends(payload)
     },
-    handleClick () {
-      document.getElementById('profileMenu').style.width = '349px'
-    },
-
-    handleClose () {
-      document.getElementById('profileMenu').style.width = '0px'
+    show () {
+      document.getElementById('menu-content').classList.toggle('active')
     }
   },
   mounted () {
@@ -79,10 +75,6 @@ export default {
 </script>
 
 <style scoped>
-.show {
-    display: block;
-}
-
 .menu-profile {
     position: relative;
     transition: 2s;
@@ -98,16 +90,18 @@ export default {
     cursor: pointer;
 }
 
-.menu-content {
+#menu-content {
     width: 0px;
     height: max-content;
     background: #FFFFFF;
     position: absolute;
-    left: 300px;
-    top: 0px;
+    left: 330px;
     z-index: 1;
     overflow: auto;
-    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+#menu-content.active {
+    width: 349px;
 }
 
 .menu-top {
@@ -145,7 +139,7 @@ export default {
     width: 100px;
     height: 100px;
     border-radius: 100%;
-    object-fit: contain;
+    object-fit: cover;
     margin: 20px auto;
 }
 
