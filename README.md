@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/logo.png" width="200">
+  <img src="./screenshots/logo.png" width="200">
 </p>
 
 # Telegram
@@ -33,14 +33,13 @@ VUE_APP_SOCKET_URL =
 ```
 
 ## Screenshots
-<div class="flex">
-  <img src="images/login.png" width="400">
-  <img src="images/dashboard.png" width="400">
-  <img src="images/transaction-history.png" width="400">
-  <img src="images/search-receiver.png" width="400">
-  <img src="images/input-amount.png" width="400">
-  <img src="images/settings-profile.png" width="400">
-  <img src="images/manage-phone.png" width="400">
+<div align="center" class="flex">
+  <img src="./screenshots/landing-page.png" width="300">
+  <img src="./screenshots/login.png" width="300">
+  <img src="./screenshots/profile.png" width="300">
+  <img src="./screenshots/friend-list.png" width="300">
+  <img src="./screenshots/message.png" width="300">
+  <img src="./screenshots/friends-data.png" width="300">
 </div>
 
 ## Author
