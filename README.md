@@ -3,7 +3,7 @@
 </p>
 
 # Telegram
-Telegram chat created using Vue JS framework. Telegram is a website application chat real time, users can send message with friends and update profile, also users can view current location friends. Created with design not complicated and user friendly.
+Telegram chat created using Vue JS framework and Socket IO. Telegram is a website application chat real time, users can send message with friends and update profile, also users can view current location friends. Created with design not complicated and user friendly.
 
 ## Features
 * **Chat real time**
