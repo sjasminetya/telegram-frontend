@@ -34,12 +34,12 @@ VUE_APP_SOCKET_URL =
 
 ## Screenshots
 <div align="center" class="flex">
-  <img src="./screenshots/landing-page.png" width="300" height="100">
-  <img src="./screenshots/login.png" width="300" height="100">
-  <img src="./screenshots/profile.png" width="300" height="100">
-  <img src="./screenshots/friend-list.png" width="300" height="100">
-  <img src="./screenshots/message.png" width="300" height="100">
-  <img src="./screenshots/friends-data.png" width="300" height="100">
+  <img src="./screenshots/landing-page.png" width="200" height="200">
+  <img src="./screenshots/login.png" width="200" height="200">
+  <img src="./screenshots/profile.png" width="200" height="200">
+  <img src="./screenshots/friend-list.png" width="200" height="200">
+  <img src="./screenshots/message.png" width="200" height="200">
+  <img src="./screenshots/friends-data.png" width="200" height="200">
 </div>
 
 ## Author
