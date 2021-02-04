@@ -57,7 +57,7 @@ export default {
     SideProfile
   },
   methods: {
-    ...mapActions(['getUserById', 'messageFriends', 'getAllHistory']),
+    ...mapActions(['getUserById', 'messageFriends', 'getAllHistory', 'currentMessage']),
     ...mapMutations(['SET_MESSAGE', 'REMOVE_MESSAGE', 'SET_MESSAGE_PUSH']),
     friends () {
       const id = this.$route.params.id
@@ -76,6 +76,7 @@ export default {
   },
   async mounted () {
     await this.friends()
+    await this.currentMessage()
 
     // get history message
     const id = this.$route.params.id

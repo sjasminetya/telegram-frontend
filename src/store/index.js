@@ -22,7 +22,8 @@ export default new Vuex.Store({
     room: [],
     roomMessage: [],
     historyRoom: [],
-    nameJoinRoom: []
+    nameJoinRoom: [],
+    currentMessage: []
   },
   plugins: [createPersistedState()],
   mutations: {
@@ -53,7 +54,6 @@ export default new Vuex.Store({
     },
     SET_MESSAGE_PUSH (state, payload) {
       state.messages.push(payload)
-      // console.log('message push di store')
     },
     REMOVE_MESSAGE (state) {
       state.messages = []
@@ -75,6 +75,9 @@ export default new Vuex.Store({
     },
     SET_NAME_JOIN_ROOM (state, payload) {
       state.nameJoinRoom = payload
+    },
+    SET_CURRENT_MESSAGE (state, payload) {
+      state.currentMessage = payload
     },
     REMOVE_TOKEN (state) {
       state.token = null
@@ -291,6 +294,20 @@ export default new Vuex.Store({
           })
       })
     },
+    currentMessage (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/last-message/${localStorage.getItem('id')}`, payload)
+          .then(res => {
+            const result = res.data.result
+            console.log('last message', result)
+            context.commit('SET_CURRENT_MESSAGE', result)
+            resolve(result)
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
     interceptorRequest (context) {
       axios.interceptors.request.use(function (config) {
         config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
@@ -422,6 +439,9 @@ export default new Vuex.Store({
     },
     nameJoinRoom (state) {
       return state.nameJoinRoom
+    },
+    lastMessage (state) {
+      return state.currentMessage
     }
   },
   modules: {

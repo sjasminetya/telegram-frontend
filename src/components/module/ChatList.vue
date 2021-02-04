@@ -17,9 +17,17 @@
                 </div>
                 <div class="name-message">
                     <h6 class="username">{{data.name}}</h6>
-                    <p class="message"></p>
+                    <div v-for="(last, index) in lastMessage" :key="index">
+                        <div v-if="data.id === last.receiverId">
+                            <p class="message">{{last.message}}</p>
+                        </div>
+                    </div>
                 </div>
-                <p class="time">15.12</p>
+                <div v-for="(last, index) in lastMessage" :key="index">
+                    <div v-if="data.id === last.receiverId">
+                        <p class="time">{{setDate(last.time)}}</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -30,7 +38,7 @@
                 </div>
                 <div class="name-message">
                     <h6 class="username">{{data.name}}</h6>
-                    <p class="message"></p>
+                    <p class="message">{{lastMessage.message}}</p>
                 </div>
                 <p class="time">15.12</p>
             </div>
@@ -40,6 +48,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import axios from 'axios'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import Menu from '../module/Menu'
@@ -59,8 +68,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getFriends', 'getAllUser', 'getGroupById', 'getAllHistory', 'messageFriends']),
-    ...mapMutations(['REMOVE_HISTORY', 'SET_MESSAGE', 'REMOVE_MESSAGE']),
+    ...mapActions(['getFriends', 'getAllUser', 'getGroupById', 'getAllHistory', 'messageFriends', 'currentMessage']),
+    ...mapMutations(['REMOVE_HISTORY', 'SET_MESSAGE', 'REMOVE_MESSAGE', 'SET_MESSAGE_PUSH']),
     async goMessage (id) {
       console.log('isi id', id)
       this.$router.push(`/main/message/${id}`)
@@ -78,6 +87,9 @@ export default {
       const resultSearch = searchName.data.result
       this.searchName = resultSearch
       console.log(searchName)
+    },
+    setDate (date) {
+      return moment(date).format('LT')
     }
   },
   watch: {
@@ -90,9 +102,10 @@ export default {
   mounted () {
     this.getFriends()
     this.searchUser()
+    this.currentMessage()
   },
   computed: {
-    ...mapGetters(['friends'])
+    ...mapGetters(['friends', 'lastMessage'])
   }
 }
 </script>

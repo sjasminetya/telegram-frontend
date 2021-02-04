@@ -95,7 +95,7 @@ export default {
     height: max-content;
     background: #FFFFFF;
     position: absolute;
-    left: 330px;
+    left: 320px;
     z-index: 1;
     overflow: auto;
 }
