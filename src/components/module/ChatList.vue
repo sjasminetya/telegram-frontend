@@ -6,7 +6,6 @@
     </div>
     <div class="menu-search">
         <input v-model="search" @keyup.enter="searchUser" type="text" class="form-control" placeholder="Search User">
-        <ChildMenu/>
     </div>
     <div class="menu-chat-list">
         <h1>All</h1>
@@ -18,13 +17,13 @@
                 <div class="name-message">
                     <h6 class="username">{{data.name}}</h6>
                     <div v-for="(last, index) in lastMessage" :key="index">
-                        <div v-if="data.id === last.receiverId">
+                        <div v-if="data.id === last.receiverId && last.senderId === userLogin.id">
                             <p class="message">{{last.message}}</p>
                         </div>
                     </div>
                 </div>
                 <div v-for="(last, index) in lastMessage" :key="index">
-                    <div v-if="data.id === last.receiverId">
+                    <div v-if="data.id === last.receiverId && last.senderId === userLogin.id">
                         <p class="time">{{setDate(last.time)}}</p>
                     </div>
                 </div>
@@ -38,9 +37,17 @@
                 </div>
                 <div class="name-message">
                     <h6 class="username">{{data.name}}</h6>
-                    <p class="message">{{lastMessage.message}}</p>
+                    <div v-for="(last, index) in lastMessage" :key="index">
+                        <div v-if="data.id === last.receiverId && last.senderId === userLogin.id">
+                            <p class="message">{{last.message}}</p>
+                        </div>
+                    </div>
                 </div>
-                <p class="time">15.12</p>
+                <div v-for="(last, index) in lastMessage" :key="index">
+                    <div v-if="data.id === last.receiverId && last.senderId === userLogin.id">
+                        <p class="time">{{setDate(last.time)}}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -52,13 +59,11 @@ import moment from 'moment'
 import axios from 'axios'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import Menu from '../module/Menu'
-import ChildMenu from '../module/CildMenu'
 export default {
   name: 'ChatList',
   props: ['socket'],
   components: {
-    Menu,
-    ChildMenu
+    Menu
   },
   data () {
     return {
@@ -68,7 +73,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getFriends', 'getAllUser', 'getGroupById', 'getAllHistory', 'messageFriends', 'currentMessage']),
+    ...mapActions(['getFriends', 'getAllUser', 'getAllHistory', 'messageFriends', 'currentMessage', 'getUserById']),
     ...mapMutations(['REMOVE_HISTORY', 'SET_MESSAGE', 'REMOVE_MESSAGE', 'SET_MESSAGE_PUSH']),
     async goMessage (id) {
       console.log('isi id', id)
@@ -103,9 +108,10 @@ export default {
     this.getFriends()
     this.searchUser()
     this.currentMessage()
+    this.getUserById()
   },
   computed: {
-    ...mapGetters(['friends', 'lastMessage'])
+    ...mapGetters(['friends', 'lastMessage', 'userLogin'])
   }
 }
 </script>

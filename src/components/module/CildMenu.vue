@@ -8,13 +8,11 @@
 </template>
 
 <script>
-import io from 'socket.io-client'
 export default {
   name: 'ChildMenu',
   data () {
     return {
-      idUser: '',
-      socket: io(`${process.env.VUE_APP_SOCKET_URL}`)
+      idUser: ''
     }
   },
   methods: {

@@ -3,7 +3,6 @@
             <img src="../../assets/menu.png" @click.prevent="handleClick" class="dropmenu" alt="icon menu">
             <div id="myMenu" class="menu-content">
                 <router-link to="/profile"><i class="fas fa-cog"></i> Settings </router-link>
-                <router-link to="#"><i class="far fa-address-book"></i> Contacts </router-link>
                 <div @click.prevent="handleLogout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout </div>
             </div>
         </div>
