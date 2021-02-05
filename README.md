@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="images/logo.png" width="200">
+  <img src="./screenshots/logo.png" width="200">
 </p>
 
 # Telegram
-Telegram chat created using Vue JS framework. Telegram is a website application chat real time, users can send message with friends and update profile, also users can view current location friends. Created with design not complicated and user friendly.
+Telegram chat created using Vue JS framework and Socket IO. Telegram is a website application chat real time, users can send message with friends and update profile, also users can view current location friends. Created with design not complicated and user friendly.
 
 ## Features
 * **Chat real time**
@@ -33,14 +33,13 @@ VUE_APP_SOCKET_URL =
 ```
 
 ## Screenshots
-<div class="flex">
-  <img src="images/login.png" width="400">
-  <img src="images/dashboard.png" width="400">
-  <img src="images/transaction-history.png" width="400">
-  <img src="images/search-receiver.png" width="400">
-  <img src="images/input-amount.png" width="400">
-  <img src="images/settings-profile.png" width="400">
-  <img src="images/manage-phone.png" width="400">
+<div align="center" class="flex">
+  <img src="./screenshots/landing-page.png" width="280" height="200">
+  <img src="./screenshots/login.png" width="280" height="200">
+  <img src="./screenshots/profile.png" width="280" height="200">
+  <img src="./screenshots/friend-list.png" width="280" height="200">
+  <img src="./screenshots/message.png" width="280" height="200">
+  <img src="./screenshots/friends-data.png" width="280" height="200">
 </div>
 
 ## Author
