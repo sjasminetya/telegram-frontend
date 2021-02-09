@@ -21,7 +21,6 @@
                             <p class="message">{{last.message}}</p>
                         </div>
                     </div>
-                    <hr>
                 </div>
                 <div v-for="(last, index) in lastMessage" :key="index">
                     <div v-if="data.id === last.receiverId && last.senderId === userLogin.id">
@@ -43,7 +42,6 @@
                             <p class="message">{{last.message}}</p>
                         </div>
                     </div>
-                    <hr>
                 </div>
                 <div v-for="(last, index) in lastMessage" :key="index">
                     <div v-if="data.id === last.receiverId && last.senderId === userLogin.id">
@@ -199,11 +197,6 @@ export default {
 
 .menu-chat-list .form-chat .name-message {
     padding-left: 20px;
-}
-
-.menu-chat-list .form-chat .name-message hr {
-    width: 290px;
-    background-color: #7E98DF;
 }
 
 .menu-chat-list .form-chat .time {
