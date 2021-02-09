@@ -80,7 +80,6 @@ export default {
 
     // get history message
     const id = this.$route.params.id
-    console.log('isi id mounted', id)
     this.getAllHistory(id)
     this.REMOVE_MESSAGE()
 
@@ -91,10 +90,7 @@ export default {
 
     // listen message from backend
     this.socket.on('kirimkembali', (data) => {
-      console.log('diambil dari data', data.receiverId)
-      console.log('current id receiver', this.messageToFriends.id)
       if (data.receiverId === this.messageToFriends.id || data.senderId === this.messageToFriends.id) {
-        console.log('seperti biasa')
         this.SET_MESSAGE_PUSH(data)
         if (data.senderId !== this.userLogin.id) {
           this.$notify({
@@ -104,7 +100,6 @@ export default {
           })
         }
       } else {
-        console.log('ada orang ke tiga')
         if (data.senderId !== this.userLogin.id) {
           this.$notify({
             group: 'foo',
@@ -235,7 +230,7 @@ export default {
     color: #FFFFFF;
     padding: 30px 30px 30px 30px;
     margin-left: 20px;
-    box-shadow: 0 0px 20px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.22);
+    border: 1px solid #FFFFFF;
 }
 
 .message .sender .the-message {
@@ -247,7 +242,7 @@ export default {
     padding: 30px 30px 30px 30px;
     margin-right: 10px;
     word-wrap: break-word;
-    box-shadow: 0 0px 20px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.22);
+    border: 1px solid #7E98DF;
 }
 
 .message .sender img {
@@ -276,6 +271,11 @@ export default {
     width: 800px;
     height: 60px;
     padding-left: 50px;
+}
+
+.footer-message input:focus {
+  box-shadow: none;
+  border: 1px solid #7E98DF;
 }
 
 .footer-message .icon-send {

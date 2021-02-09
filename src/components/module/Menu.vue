@@ -41,7 +41,6 @@ export default {
     handleLogout () {
       const idUser = localStorage.getItem('id')
       this.idUser = idUser
-      console.log('udah logout', idUser)
       this.socket.emit('offline', { idUser })
       this.logout()
         .then(() => {

@@ -72,9 +72,6 @@ export default {
       this.register(payload)
         .then(() => {
         })
-        .catch(err => {
-          console.log('error register?', err)
-        })
     },
     ...mapMutations(['togglePassword'])
   }

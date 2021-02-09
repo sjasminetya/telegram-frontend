@@ -103,7 +103,6 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.post(`${process.env.VUE_APP_URL_BACKEND}/users/login`, payload)
           .then(res => {
-            console.log(res.data.result)
             const result = res.data.result
             localStorage.setItem('id', result.id)
             localStorage.setItem('token', result.token)
@@ -122,7 +121,6 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.post(`${process.env.VUE_APP_URL_BACKEND}/users/register`, payload)
           .then(res => {
-            console.log(res.data.result)
             const result = res.data.result
             context.commit('SET_USER', result)
             resolve(res)
@@ -131,30 +129,22 @@ export default new Vuex.Store({
     },
     update (context, payload) {
       return new Promise((resolve, reject) => {
-        // console.log('ini errornya?')
         axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/${localStorage.getItem('id')}`, payload)
-        // console.log('ini isi payload update', payload)
           .then((res) => {
-            console.log('data update', res.data.result)
             resolve(res)
           })
           .catch(err => {
-            console.log('ada error?', err.response)
             reject(err)
           })
       })
     },
     updateImage (context, formData) {
       return new Promise((resolve, reject) => {
-        // console.log('ini errornya?')
         axios.patch(`${process.env.VUE_APP_URL_BACKEND}/users/image/${localStorage.getItem('id')}`, formData)
-        // console.log('ini isi payload update', payload)
           .then((res) => {
-            console.log('data update', res.data.result)
             resolve(res)
           })
           .catch(err => {
-            console.log('ada error?', err.response)
             reject(err)
           })
       })
@@ -168,7 +158,7 @@ export default new Vuex.Store({
             resolve(res)
           })
           .catch(err => {
-            console.log(err)
+            reject(err)
           })
       })
     },
@@ -176,13 +166,11 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/${localStorage.getItem('id')}`)
           .then(res => {
-            console.log('data login', res.data.result)
             const result = res.data.result[0]
             context.commit('SET_PROFILE', result)
             resolve(res)
           })
           .catch(err => {
-            console.log('error di get user by id', err)
             reject(err)
           })
       })
@@ -192,12 +180,10 @@ export default new Vuex.Store({
         axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/history/${localStorage.getItem('id')}/${payload}`)
           .then(res => {
             const result = res.data.result
-            console.log('all history', res.data.result)
             context.commit('SET_MESSAGE', result)
             resolve(res)
           })
           .catch(err => {
-            console.log('error di get history page message', err)
             reject(err)
           })
       })
@@ -206,90 +192,24 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/friends/${localStorage.getItem('id')}`)
           .then(res => {
-            console.log('data friends', res.data.result)
             const result = res.data.result
             context.commit('SET_FRIENDS', result)
             resolve(res)
           })
           .catch(err => {
-            console.log('error di get chat list', err)
             reject(err)
           })
       })
     },
     messageFriends (context, payload) {
-      // console.log('ngga kepanggil?')
       return new Promise((resolve, reject) => {
         axios.get(`${process.env.VUE_APP_URL_BACKEND}/users/friends/message/${payload}`)
-        // console.log('halo')
           .then((res) => {
             const result = res.data.result[0]
-            console.log('ini di page message', result)
             context.commit('SET_MESSAGE_FRIENDS', result)
             resolve(res)
           })
           .catch(err => {
-            console.log('ada error?', err)
-            reject(err)
-          })
-      })
-    },
-    getGroupById (context) {
-      return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/room/${localStorage.getItem('id')}`)
-          .then(res => {
-            console.log('data group untuk chat list', res.data.result)
-            const result = res.data.result
-            context.commit('SET_ROOM', result)
-            resolve(res)
-          })
-          .catch(err => {
-            console.log('error di get room by id', err)
-            reject(err)
-          })
-      })
-    },
-    messageRoom (context, payload) {
-      return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/room/message/${localStorage.getItem('id')}`)
-          .then(res => {
-            console.log('data group untuk message room', res.data.result[0])
-            const result = res.data.result[0]
-            context.commit('SET_ROOM_MESSAGE', result)
-            resolve(res)
-          })
-          .catch(err => {
-            console.log('error di get room by id', err)
-            reject(err)
-          })
-      })
-    },
-    historyChatGroup (context, payload) {
-      return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/chat-room/history`)
-          .then(res => {
-            const result = res.data.result
-            console.log('all history chat group', res.data.result)
-            context.commit('SET_HISTORY_ROOM', result)
-            resolve(res)
-          })
-          .catch(err => {
-            console.log('error di get history page message room', err)
-            reject(err)
-          })
-      })
-    },
-    whoJoinRoom (context, payload) {
-      return new Promise((resolve, reject) => {
-        axios.get(`${process.env.VUE_APP_URL_BACKEND}/chat-room?nameRoom=${payload.nameRoom}`)
-          .then(res => {
-            const result = res.data.result
-            console.log('name join room', res.data.result)
-            context.commit('SET_NAME_JOIN_ROOM', result)
-            resolve(res)
-          })
-          .catch(err => {
-            console.log('error di get name join room', err)
             reject(err)
           })
       })
@@ -299,7 +219,6 @@ export default new Vuex.Store({
         axios.get(`${process.env.VUE_APP_URL_BACKEND}/message/last-message/${localStorage.getItem('id')}`, payload)
           .then(res => {
             const result = res.data.result
-            console.log('last message', result)
             context.commit('SET_CURRENT_MESSAGE', result)
             resolve(result)
           })

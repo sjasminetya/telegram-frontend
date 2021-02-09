@@ -86,7 +86,6 @@ export default {
     const historyChat = await this.historyChatGroup()
     const get = historyChat.data.result
     this.messages.push(...get)
-    console.log('get history', this.messages)
 
     const nameRoom = this.roomMessage.nameRoom
     const senderName = this.roomMessage.name
@@ -94,9 +93,7 @@ export default {
     this.senderName = senderName
     this.socket.emit('inital-user-join-group', { nameRoom, senderName })
     this.socket.on('send-to-client', data => {
-      console.log('from backend after insert message', data)
       this.messages.push(data)
-      console.log('after push', this.messages)
     })
 
     const scrollMessage = document.querySelector('#message-content')

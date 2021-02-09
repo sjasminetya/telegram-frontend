@@ -21,6 +21,7 @@
                             <p class="message">{{last.message}}</p>
                         </div>
                     </div>
+                    <hr>
                 </div>
                 <div v-for="(last, index) in lastMessage" :key="index">
                     <div v-if="data.id === last.receiverId && last.senderId === userLogin.id">
@@ -42,6 +43,7 @@
                             <p class="message">{{last.message}}</p>
                         </div>
                     </div>
+                    <hr>
                 </div>
                 <div v-for="(last, index) in lastMessage" :key="index">
                     <div v-if="data.id === last.receiverId && last.senderId === userLogin.id">
@@ -76,7 +78,6 @@ export default {
     ...mapActions(['getFriends', 'getAllUser', 'getAllHistory', 'messageFriends', 'currentMessage', 'getUserById']),
     ...mapMutations(['REMOVE_HISTORY', 'SET_MESSAGE', 'REMOVE_MESSAGE', 'SET_MESSAGE_PUSH']),
     async goMessage (id) {
-      console.log('isi id', id)
       this.$router.push(`/main/message/${id}`)
       this.REMOVE_MESSAGE()
       this.messageFriends(id)
@@ -91,16 +92,13 @@ export default {
       const searchName = await axios.get(`${process.env.VUE_APP_URL_BACKEND}/users?name=${this.search}`)
       const resultSearch = searchName.data.result
       this.searchName = resultSearch
-      console.log(searchName)
     },
     setDate (date) {
       return moment(date).format('LT')
     }
   },
   watch: {
-    search (newSearch, oldSearch) {
-      console.log('New search is', newSearch)
-      console.log('Old search is', oldSearch)
+    search () {
       this.searchUser()
     }
   },
@@ -143,7 +141,7 @@ export default {
 .menu-search input {
     background: #FAFAFA;
     border-radius: 15px;
-    width: 320px;
+    width: 100%;
     height: 60px;
     background-image: url('../../assets/search.png');
     background-repeat: no-repeat;
@@ -154,6 +152,7 @@ export default {
 
 .menu-search input:focus {
     box-shadow: none;
+    border: 1px solid #7E98DF;
 }
 
 .menu-chat-list {
@@ -181,7 +180,7 @@ export default {
 
 .menu-chat-list .form-chat {
     display: flex;
-    margin-top: 30px;
+    margin-top: 10px;
     cursor: pointer;
     padding-left: 30px;
 }
@@ -200,6 +199,11 @@ export default {
 
 .menu-chat-list .form-chat .name-message {
     padding-left: 20px;
+}
+
+.menu-chat-list .form-chat .name-message hr {
+    width: 290px;
+    background-color: #7E98DF;
 }
 
 .menu-chat-list .form-chat .time {

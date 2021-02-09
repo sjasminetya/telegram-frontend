@@ -169,8 +169,6 @@ export default {
   },
   mounted () {
     this.getUserById()
-    // this.updateLocation()
-    // this.update()
   },
   computed: {
     ...mapGetters(['userLogin'])
@@ -344,7 +342,7 @@ export default {
 .menu-info .info-account .input-username .username:focus,
 .menu-info .info-account .input-username .edit-username:focus,
 .menu-info .info-account .input-bio .bio:focus,
-.menu-info .info-account .input-bio .edit-bio :focus {
+.menu-info .info-account .input-bio .edit-bio:focus {
     outline: none;
     box-shadow: none;
     border: none;
