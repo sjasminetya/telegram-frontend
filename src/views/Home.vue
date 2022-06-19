@@ -22,7 +22,7 @@ export default {
 <style scoped>
 .home {
   background: #7E98DF;
-  height: 657px;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;

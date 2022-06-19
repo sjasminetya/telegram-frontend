@@ -23,7 +23,8 @@ export default new Vuex.Store({
     roomMessage: [],
     historyRoom: [],
     nameJoinRoom: [],
-    currentMessage: []
+    currentMessage: [],
+    openProfileFriend: false
   },
   plugins: [createPersistedState()],
   mutations: {
@@ -34,6 +35,10 @@ export default new Vuex.Store({
       } else {
         state.password.type = 'password'
       }
+    },
+    SET_OPEN (state, payload) {
+      console.log('payload', payload)
+      state.openProfileFriend = payload
     },
     SET_USER (state, payload) {
       state.users = payload
@@ -227,6 +232,9 @@ export default new Vuex.Store({
           })
       })
     },
+    toggleOpen (context, payload) {
+      context.commit('SET_OPEN', payload)
+    },
     interceptorRequest (context) {
       axios.interceptors.request.use(function (config) {
         config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
@@ -361,6 +369,10 @@ export default new Vuex.Store({
     },
     lastMessage (state) {
       return state.currentMessage
+    },
+    toggle (state) {
+      console.log('state', state)
+      return state.openProfileFriend
     }
   },
   modules: {

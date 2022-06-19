@@ -1,11 +1,20 @@
 <template>
-        <div class="menu">
-            <img src="../../assets/menu.png" @click.prevent="handleClick" class="dropmenu" alt="icon menu">
-            <div id="myMenu" class="menu-content">
-                <router-link to="/profile"><i class="fas fa-cog"></i> Settings </router-link>
-                <div @click.prevent="handleLogout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout </div>
-            </div>
-        </div>
+  <div class="menu">
+    <img
+      src="../../assets/menu.png"
+      @click.prevent="handleClick"
+      class="dropmenu"
+      alt="icon menu"
+    />
+    <div id="myMenu" class="menu-content">
+      <router-link to="/profile"
+        ><img src="../../assets/settings.png" alt="" /> Settings
+      </router-link>
+      <div @click.prevent="handleLogout" class="logout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -42,16 +51,15 @@ export default {
       const idUser = localStorage.getItem('id')
       this.idUser = idUser
       this.socket.emit('offline', { idUser })
-      this.logout()
-        .then(() => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Succeed logout',
-            showConfirmButton: false,
-            timer: 1500
-          })
-          this.$router.push('/auth/login')
+      this.logout().then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Succeed logout',
+          showConfirmButton: false,
+          timer: 1500
         })
+        this.$router.push('/auth/login')
+      })
     }
   }
 }
@@ -59,41 +67,50 @@ export default {
 
 <style scoped>
 .menu {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .menu img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-    margin-right: 10px;
-    cursor: pointer;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin-right: 10px;
+  cursor: pointer;
 }
 
 .menu-content {
-    display: none;
-    position: absolute;
-    background: #7E98DF;
-    border-radius: 35px 10px 35px 35px;
-    min-width: 160px;
-    overflow: auto;
-    z-index: 1;
-    right: 0px;
-    margin-top: 10px;
+  display: none;
+  position: absolute;
+  background: #7e98df;
+  border-radius: 35px 10px 35px 35px;
+  min-width: 160px;
+  overflow: auto;
+  z-index: 1;
+  right: 0px;
+  margin-top: 10px;
 }
 
 .menu-content a,
 .menu-content .logout {
-    font-size: 16px;
-    line-height: 19px;
-    letter-spacing: -0.165px;
-    color: #FFFFFF;
-    display: block;
-    text-decoration: none;
-    padding: 10px 25px;
-    margin-top: 15px;
-    margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.165px;
+  color: #ffffff;
+  display: block;
+  text-decoration: none;
+  padding: 10px 25px;
+  margin-top: 15px;
+  /* margin-bottom: 20px; */
+}
+
+.menu-content .logout {
+  margin-bottom: 15px;
+}
+
+.menu-content .logout .fa-sign-out-alt {
+  margin-right: 10px;
+  font-size: 20px;
 }
 
 .menu-content i {
@@ -107,6 +124,6 @@ export default {
 }
 
 .show {
-    display: block;
+  display: block;
 }
 </style>

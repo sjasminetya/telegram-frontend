@@ -19,7 +19,7 @@ export default {
 <style scoped>
 main {
     background: #E5E5E5;
-    height: max-content;
+    height: 100vh;
 }
 
 main .form-box {

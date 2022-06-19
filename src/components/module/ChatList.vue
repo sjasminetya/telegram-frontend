@@ -189,10 +189,10 @@ export default {
 }
 
 .menu-chat-list .form-chat .img-profile img{
-    width: 64px;
-    height: 64px;
+    width: 62px;
+    height: 62px;
     object-fit: cover;
-    border-radius: 100%;
+    border-radius: 20px;
 }
 
 .menu-chat-list .form-chat .name-message {
